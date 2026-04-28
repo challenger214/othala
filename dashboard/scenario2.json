@@ -1,14 +1,14 @@
 {
     "profile": {
       "name": "김철수", "age": 78, "gender": "남", "location": "서울시 마포구 성산동",
-      "status": "🌧️ 우울감 감지", "statusMessage": "1시간당 채널 변경 50회 초과"
+      "status": "🌧️ 어려움 감지", "statusMessage": "1시간당 채널 변경 50회 초과"
     },
     "device": {
       "tv": "ON", "tvTime": "1시간 20분", "volume": 20, "channel": "VOD 시청 중",
       "light": "OFF", "temp": 24
     },
     "events": [
-      { "time": "15:00", "label": "우울감 감지", "icon": "🌧️" },
+      { "time": "15:00", "label": "어려움 감지", "icon": "🌧️" },
       { "time": "15:30", "label": "AI 추천 시청", "icon": "💡" }
     ],
     "timeline": [
@@ -24,11 +24,11 @@
     "zappingAvg": "2분 10초", "zappingMax": "63회",
     "content": [60, 20, 10, 10], "emotionScore": 20,
     "keywords": [
-      { "word": "미스터트롯", "size": 32, "color": "#facc15" },
-      { "word": "귀찮아", "size": 28, "color": "#4ade80" },
-      { "word": "적적해", "size": 14, "color": "#94a3b8" },
+      { "word": "어디서하지", "size": 32, "color": "#facc15" },
+      { "word": "못찾겠네", "size": 28, "color": "#4ade80" },
+      { "word": "볼게 없네..", "size": 14, "color": "#94a3b8" },
       { "word": "힘들어", "size": 26, "color": "#38bdf8" },
       { "word": "노래", "size": 22, "color": "#38bdf8" }
     ],
-    "insights": "오후 2시경 과도한 채널 변동과 높은 볼륨이 감지되어, 우울감으로 판단하고 AI가 평소 가장 선호하시는 <미스터트롯> VOD를 먼저 제안하여 시청을 시작하셨습니다.<br><br><span style='color:#FF0000'>🌧️ 정서 지수 피드백: 잦은 채널 변경 및 부정어 발화가 감지되어 현재 정서 지수가 '부정(20점)'으로 하락했습니다.</span>"
+    "insights": "오후 2시경 과도한 채널 변동과 높은 볼륨이 감지되어, tv 사용의 어려움이 있음으로 판단하고 AI가 평소 가장 선호하시는 <미스터트롯> VOD를 먼저 제안하여 시청을 시작하셨습니다.<br><br><span style='color:#FF0000'>🌧️ 정서 지수 피드백: 잦은 채널 변경 및 부정어 발화가 감지되어 현재 정서 지수가 '부정(20점)'으로 하락했습니다.</span>"
 }
