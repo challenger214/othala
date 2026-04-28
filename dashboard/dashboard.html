@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TV 라이프 케어 관제 대시보드</title>
+    <!-- Chart.js 로드 -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
@@ -33,26 +34,21 @@
         .panel { background-color: var(--panel-bg); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
         .panel-title { font-size: 16px; font-weight: 500; color: var(--text-muted); margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
 
-        /* 🚨 개선된 타임라인 커스텀 UI */
+        /* 타임라인 UI */
         .timeline-container { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
-        
-        .timeline-visual-area { position: relative; margin-top: 60px; margin-bottom: 10px; } /* 상단 여백 대폭 확대 */
+        .timeline-visual-area { position: relative; margin-top: 60px; margin-bottom: 10px; } 
         .timeline-markers { position: absolute; top: -60px; left: 0; width: 100%; height: calc(100% + 60px); pointer-events: none; }
         .marker-group { position: absolute; display: flex; flex-direction: column; align-items: center; transform: translateX(-50%); height: 100%; z-index: 10; }
-        
-        .marker-content { text-align: center; margin-bottom: 4px; background-color: var(--panel-bg); padding: 4px; border-radius: 6px; white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.2); } /* 마커 배경 추가 및 겹침 방지 */
+        .marker-content { text-align: center; margin-bottom: 4px; background-color: var(--panel-bg); padding: 4px; border-radius: 6px; white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
         .marker-icon { font-size: 18px; line-height: 1; margin-bottom: 4px; }
         .marker-time { color: var(--accent-blue); font-size: 13px; font-weight: bold; line-height: 1.2; }
         .marker-label { color: #fff; font-size: 12px; font-weight: 500; }
-        
-        .marker-line { width: 2px; flex-grow: 1; background-color: rgba(56, 189, 248, 0.5); /* 선을 조금 더 두껍고 부드럽게 */ }
-
+        .marker-line { width: 2px; flex-grow: 1; background-color: rgba(56, 189, 248, 0.5); }
         .timeline-track { width: 100%; height: 50px; background-color: #0f172a; border-radius: 8px; display: flex; overflow: hidden; position: relative; border: 1px solid var(--border-color); }
         .segment { height: 100%; transition: width 0.5s ease; }
         .seg-active { background-color: var(--accent-blue); }
         .seg-idle { background-color: var(--accent-yellow); }
         .seg-sleep { background-color: transparent; }
-        
         .timeline-labels { display: flex; justify-content: space-between; color: var(--text-muted); font-size: 12px; margin-top: 5px; padding: 0 5px; }
         .timeline-legend { display: flex; justify-content: center; gap: 15px; margin-top: 15px; font-size: 12px; color: var(--text-muted); }
         .legend-item { display: flex; align-items: center; gap: 5px; }
@@ -66,17 +62,17 @@
         .micro-stats div p { font-size: 20px; font-weight: bold; color: var(--accent-blue); }
         .word-cloud { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px; padding: 10px; }
         
-        /* 🚨 개선된 Footer (인사이트) 영역 */
+        /* Footer (인사이트) 영역 */
         .footer { background-color: var(--panel-bg); border-radius: 12px; padding: 20px 25px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1); }
         .footer-title { color: var(--accent-blue); font-weight: bold; font-size: 16px; display: flex; align-items: center; gap: 8px;}
         .footer-text { 
-            font-size: 16px; /* 폰트 사이즈 확대 */
+            font-size: 16px; 
             color: var(--text-main); 
             line-height: 1.6; 
-            background-color: rgba(255,255,255,0.03); /* 카드형 배경 추가 */
+            background-color: rgba(255,255,255,0.03); 
             padding: 15px 20px; 
             border-radius: 8px; 
-            border-left: 4px solid var(--accent-blue); /* 좌측 강조 라인 */
+            border-left: 4px solid var(--accent-blue);
         }
     </style>
 </head>
@@ -142,7 +138,6 @@
         </div>
     </div>
 
-    <!-- 개선된 푸터(인사이트) HTML 구조 -->
     <div class="footer">
         <div class="footer-title">🤖 AI 종합 인사이트 및 케어 예측</div>
         <div class="footer-text" id="ai-insights">데이터를 분석 중입니다...</div>
@@ -152,32 +147,34 @@
         Chart.defaults.color = '#94a3b8';
         Chart.defaults.font.family = "'Noto Sans KR', sans-serif";
 
-    // 기존 loadData 함수를 아래와 같이 수정하세요.
-    async function loadData(url = 'data.json') {
-        try {
-            const response = await fetch(url); 
-            if (!response.ok) throw new Error('데이터를 불러올 수 없습니다.');
-            const mockData = await response.json();
-            renderDashboard(mockData);
-        } catch (error) {
-            console.error('Error fetching data:', error);
+        // 차트 인스턴스 전역 변수 (차트 중복 생성 방지용)
+        let behaviorChartInstance = null;
+        let contentChartInstance = null;
+        let emotionChartInstance = null;
+
+        async function loadData(url = 'data.json') {
+            try {
+                const response = await fetch(url); 
+                if (!response.ok) throw new Error('데이터를 불러올 수 없습니다.');
+                const mockData = await response.json();
+                renderDashboard(mockData);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                document.getElementById('ai-insights').innerHTML = `<span style="color:#f87171;">🚨 데이터를 불러오는 데 실패했습니다. 로컬 서버 환경에서 실행 중인지 확인해주세요.</span>`;
+            }
         }
-    }
-
-// 🚀 라이브 데모용 키보드 단축키 이벤트 추가 (1, 2, 3, 0 번호키)
-document.addEventListener('keydown', (event) => {
-    if (event.key === '0') loadData('data.json');       // 기본 화면
-    if (event.key === '1') loadData('scenario1.json');  // 시나리오 1: 무반응 감지
-    if (event.key === '2') loadData('scenario2.json');  // 시나리오 2: 정서 케어
-    if (event.key === '3') loadData('scenario3.json');  // 시나리오 3: 수면 환경 제어
-});
-
 
         function renderDashboard(data) {
+            // 헤더 정보 바인딩
             document.getElementById('profile-name').innerText = `${data.profile.name} 어르신 (${data.profile.age}세, ${data.profile.gender})`;
+            
+            // 배지 색상 초기화 및 세팅
             const statusEl = document.getElementById('profile-status');
             statusEl.innerText = data.profile.status;
-            if (data.profile.status !== '정상') statusEl.classList.add('warning');
+            statusEl.classList.remove('warning'); // 기존 경고 색상 무조건 제거
+            if (data.profile.status !== '정상') {
+                statusEl.classList.add('warning'); // 정상이 아닐때만 경고 색상 추가
+            }
             
             document.getElementById('dev-tv').innerText = data.device.tv;
             document.getElementById('dev-vol').innerText = data.device.volume;
@@ -187,10 +184,10 @@ document.addEventListener('keydown', (event) => {
             document.getElementById('stat-zap-avg').innerText = data.zappingAvg;
             document.getElementById('stat-zap-max').innerText = data.zappingMax;
             
-            // 인사이트 바인딩
+            // 인사이트 텍스트 바인딩
             document.getElementById('ai-insights').innerHTML = data.insights;
 
-            // 마커 렌더링
+            // 마커(이벤트) 렌더링
             const markersContainer = document.getElementById('timeline-markers');
             markersContainer.innerHTML = '';
             if(data.events) {
@@ -215,7 +212,7 @@ document.addEventListener('keydown', (event) => {
                 });
             }
 
-            // 트랙 렌더링
+            // 타임라인 트랙 렌더링
             const track = document.getElementById('timeline-track');
             track.innerHTML = ''; 
             const totalMinutes = 1440;
@@ -239,8 +236,13 @@ document.addEventListener('keydown', (event) => {
                 wcContainer.appendChild(span);
             });
 
-            // 차트들 렌더링
-            new Chart(document.getElementById('behaviorChart').getContext('2d'), {
+            // 기존 차트가 있다면 파괴(destroy)하여 겹침 방지
+            if (behaviorChartInstance) behaviorChartInstance.destroy();
+            if (contentChartInstance) contentChartInstance.destroy();
+            if (emotionChartInstance) emotionChartInstance.destroy();
+
+            // 1. 행동 패턴 차트 다시 그리기
+            behaviorChartInstance = new Chart(document.getElementById('behaviorChart').getContext('2d'), {
                 type: 'bar',
                 data: {
                     labels: data.labels,
@@ -252,20 +254,31 @@ document.addEventListener('keydown', (event) => {
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { color: '#334155' } }, y: { display: false }, y1: { display: false } } }
             });
 
-            new Chart(document.getElementById('contentChart').getContext('2d'), {
+            // 2. 콘텐츠 선호도 차트 다시 그리기
+            contentChartInstance = new Chart(document.getElementById('contentChart').getContext('2d'), {
                 type: 'doughnut',
                 data: { labels: ['트로트', '뉴스', '건강', '기타'], datasets: [{ data: data.content, backgroundColor: ['#38bdf8', '#4ade80', '#facc15', '#94a3b8'], borderWidth: 0 }] },
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, cutout: '70%' }
             });
 
-            new Chart(document.getElementById('emotionChart').getContext('2d'), {
+            // 3. 감정 상태 차트 다시 그리기
+            emotionChartInstance = new Chart(document.getElementById('emotionChart').getContext('2d'), {
                 type: 'doughnut',
                 data: { labels: ['현재 감정', ''], datasets: [{ data: [data.emotionScore, 100 - data.emotionScore], backgroundColor: ['#facc15', '#334155'], borderWidth: 0 }] },
                 options: { responsive: true, maintainAspectRatio: false, rotation: -90, circumference: 180, cutout: '75%', plugins: { legend: { display: false }, tooltip: { enabled: false } } }
             });
         }
 
-        document.addEventListener('DOMContentLoaded', loadData);
+        // 페이지가 처음 열릴 때 기본 데이터(data.json) 로드
+        document.addEventListener('DOMContentLoaded', () => loadData('data.json'));
+
+        // 🚀 단축키 이벤트 리스너: 숫자 0, 1, 2, 3 누를 때마다 화면 변경
+        document.addEventListener('keydown', (event) => {
+            if (event.key === '0') loadData('data.json');
+            if (event.key === '1') loadData('scenario1.json');
+            if (event.key === '2') loadData('scenario2.json');
+            if (event.key === '3') loadData('scenario3.json');
+        });
     </script>
 </body>
 </html>
