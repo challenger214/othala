@@ -1,33 +1,34 @@
 {
     "profile": {
       "name": "김철수", "age": 78, "gender": "남", "location": "서울시 마포구 성산동",
-      "status": "정상", "statusMessage": "정서 상태 안정 및 회복 중"
+      "status": "🌧️ 우울감 감지", "statusMessage": "1시간당 채널 변경 50회 초과"
     },
     "device": {
       "tv": "ON", "tvTime": "1시간 20분", "volume": 20, "channel": "VOD 시청 중",
-      "light": "ON", "temp": 24
+      "light": "OFF", "temp": 24
     },
     "events": [
-      { "time": "14:00", "label": "우울감 감지", "icon": "🌧️" },
-      { "time": "14:30", "label": "AI 추천 시청", "icon": "💡" }
+      { "time": "15:00", "label": "우울감 감지", "icon": "🌧️" },
+      { "time": "15:30", "label": "AI 추천 시청", "icon": "💡" }
     ],
     "timeline": [
-      { "durationMinutes": 330, "state": "sleep" }, 
-      { "durationMinutes": 300, "state": "active" },
-      { "durationMinutes": 210, "state": "sleep" },   
-      { "durationMinutes": 120, "state": "active" }
+      { "durationMinutes": 680, "state": "sleep" }, 
+      { "durationMinutes": 160, "state": "active" },
+      { "durationMinutes": 90, "state": "idle" },
+      { "durationMinutes": 120, "state": "active" },
+      { "durationMinutes": 210, "state": "sleep" }
     ],
     "labels": ["08시", "10시", "12시", "14시", "15시", "16시"],
-    "remoteClicks": [15, 20, 5, 2, 10, 35],
-    "volumeLevels": [12, 18, 15, 10, 18, 22],
-    "zappingAvg": "2분 10초", "zappingMax": "20회",
-    "content": [60, 20, 10, 10], "emotionScore": 92,
+    "remoteClicks": [0, 10, 10, 100, 90, 35],
+    "volumeLevels": [12, 18, 15, 40, 35, 22],
+    "zappingAvg": "2분 10초", "zappingMax": "63회",
+    "content": [60, 20, 10, 10], "emotionScore": 20,
     "keywords": [
       { "word": "미스터트롯", "size": 32, "color": "#facc15" },
-      { "word": "웃기네", "size": 28, "color": "#4ade80" },
+      { "word": "귀찮아", "size": 28, "color": "#4ade80" },
       { "word": "적적해", "size": 14, "color": "#94a3b8" },
-      { "word": "고마워", "size": 26, "color": "#38bdf8" },
+      { "word": "힘들어", "size": 26, "color": "#38bdf8" },
       { "word": "노래", "size": 22, "color": "#38bdf8" }
     ],
-    "insights": "오후 2시경 '적적하다'는 음성 패턴과 낮은 활동량이 감지되었으나, AI가 평소 가장 선호하시는 <미스터트롯> VOD를 먼저 제안하여 시청을 시작하셨습니다.<br><br><span style='color:#4ade80'>💖 정서 지수 피드백: 시청 중 잦은 웃음소리 발화가 감지되어 현재 정서 지수가 '매우 긍정(92점)'으로 상승했습니다.</span>"
+    "insights": "오후 2시경 과도한 채널 변동과 높은 볼륨이 감지되어, 우울감으로 판단하고 AI가 평소 가장 선호하시는 <미스터트롯> VOD를 먼저 제안하여 시청을 시작하셨습니다.<br><br><span style='color:#FF0000'>🌧️ 정서 지수 피드백: 잦은 채널 변경 및 부정어 발화가 감지되어 현재 정서 지수가 '부정(20점)'으로 하락했습니다.</span>"
 }
