@@ -10,8 +10,8 @@
     "events": [
       { "time": "05:30", "label": "기상", "icon": "🔆" },
       { "time": "14:30", "label": "귀가", "icon": "🏠" },
-      { "time": "20:00", "label": "수면 감지", "icon": "🛌" },
-      { "time": "22:30", "label": "환경 제어", "icon": "🌙" }
+      { "time": "20:30", "label": "수면 감지", "icon": "🛌" },
+      { "time": "21:00", "label": "환경 제어", "icon": "🌙" }
     ],
     "timeline": [
       { "durationMinutes": 330, "state": "sleep" }, 
@@ -22,12 +22,12 @@
       { "durationMinutes": 150, "state": "active" },
       { "durationMinutes": 90, "state": "idle" },   
       { "durationMinutes": 90, "state": "active" },
-      { "durationMinutes": 150, "state": "idle" },
+      { "durationMinutes": 60, "state": "idle" },
       { "durationMinutes": 90, "state": "sleep" }   
     ],
     "labels": ["16시", "17시", "18시", "19시", "20시", "21시", "22시", "23시"],
-    "remoteClicks": [10, 5, 25, 42, 35, 10, 2, 0],
-    "volumeLevels": [15, 15, 18, 20, 18, 14, 8, 5],
+    "remoteClicks": [10, 5, 25, 42, 35, 0, 0, 0],
+    "volumeLevels": [15, 15, 18, 20, 18, 14, 14, 14],
     "zappingAvg": "15분 00초", "zappingMax": "3회",
     "content": [20, 50, 20, 10], "emotionScore": 60,
     "keywords": [
