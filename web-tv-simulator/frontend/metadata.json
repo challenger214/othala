@@ -1,0 +1,4 @@
+{
+  "name": "Web TV Simulator",
+  "description": "A simple web-based TV simulator with 10 channels, 16:9 aspect ratio, and OSD, controlled by arrow keys."
+}
