@@ -9,17 +9,19 @@
     },
     "events": [
       { "time": "05:30", "label": "기상", "icon": "🔆" },
-      { "time": "12:00", "label": "마지막 조작", "icon": "🎮" },
-      { "time": "16:00", "label": "경고 발생", "icon": "🚨" }
+      { "time": "14:00", "label": "마지막 조작", "icon": "🎮" },
+      { "time": "18:00", "label": "경고 발생", "icon": "🚨" }
     ],
     "timeline": [
       { "durationMinutes": 330, "state": "sleep" }, 
       { "durationMinutes": 390, "state": "active" },
+      { "durationMinutes": 60, "state": "sleep" },
+      { "durationMinutes": 60, "state": "active" },
       { "durationMinutes": 240, "state": "idle" }
     ],
-    "labels": ["06시", "08시", "10시", "12시", "13시", "14시", "15시", "16시"],
-    "remoteClicks": [2, 45, 20, 15, 0, 0, 0, 0],
-    "volumeLevels": [8, 22, 18, 18, 18, 18, 18, 18],
+    "labels": ["06시", "08시", "10시", "12시", "13시", "14시", "16시", "18시"],
+    "remoteClicks": [2, 45, 20, 15, null, 2, 0, 0,0,0],
+    "volumeLevels": [8, 22, 18, 18, null, 18, null, null, null],
     "zappingAvg": "경고", "zappingMax": "0회 (최근 4시간)",
     "content": [45, 30, 15, 10], "emotionScore": 30,
     "keywords": [

@@ -9,8 +9,7 @@
     },
     "events": [
       { "time": "05:30", "label": "기상", "icon": "🔆" },
-      { "time": "12:00", "label": "점심식사", "icon": "🍚" },
-      { "time": "15:00", "label": "귀가", "icon": "🏠" }
+      { "time": "14:30", "label": "귀가", "icon": "🏠" }
     ],
     "timeline": [
       { "durationMinutes": 330, "state": "sleep" }, 
