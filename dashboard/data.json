@@ -1,0 +1,41 @@
+{
+    "profile": {
+      "name": "김수현",
+      "age": 78,
+      "gender": "여",
+      "location": "서울시 마포구 성산동",
+      "status": "정상",
+      "statusMessage": "규칙적인 일상 유지 중"
+    },
+    "device": {
+      "tv": "ON",
+      "tvTime": "2시간 15분",
+      "volume": 18,
+      "channel": "CH 19 TV조선",
+      "light": "ON",
+      "temp": 23
+    },
+    "timeline": [
+      { "durationMinutes": 390, "state": "sleep" },
+      { "durationMinutes": 300, "state": "active" },
+      { "durationMinutes": 60, "state": "idle" },
+      { "durationMinutes": 150, "state": "sleep" },
+      { "durationMinutes": 240, "state": "active" },
+      { "durationMinutes": 300, "state": "sleep" }
+    ],
+    "labels": ["06", "08", "10", "12", "14", "16", "18", "20"],
+    "remoteClicks": [5, 45, 25, 10, 0, 30, 55, 20],
+    "volumeLevels": [10, 22, 20, 15, 0, 16, 18, 14],
+    "zappingAvg": "4분 30초",
+    "zappingMax": "12회",
+    "content": [45, 30, 15, 10],
+    "emotionScore": 75,
+    "keywords": [
+      { "word": "미스터트롯", "size": 24, "color": "#38bdf8" },
+      { "word": "날씨", "size": 20, "color": "#4ade80" },
+      { "word": "재밌네", "size": 28, "color": "#facc15" },
+      { "word": "전화", "size": 14, "color": "#94a3b8" },
+      { "word": "허리", "size": 16, "color": "#f87171" }
+    ],
+    "insights": "평소보다 30분 일찍 기상하셨으며, 오전 활동량이 어제 대비 15% 증가했습니다. 전반적으로 매우 규칙적이고 건강한 생활 리듬을 유지하고 계십니다.<br><span style='color:#94a3b8'>🛌 예상 취침: 22:30 ~ 23:00</span>"
+  }

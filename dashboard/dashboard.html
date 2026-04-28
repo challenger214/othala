@@ -21,111 +21,30 @@
             --border-color: #334155;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Noto Sans KR', sans-serif;
-        }
-
-        body {
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            padding: 20px;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Noto Sans KR', sans-serif; }
+        body { background-color: var(--bg-dark); color: var(--text-main); padding: 20px; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
         /* Header 영역 */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: var(--panel-bg);
-            padding: 15px 25px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .avatar {
-            width: 50px;
-            height: 50px;
-            background-color: #475569;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-        }
-
-        .status-badge {
-            background-color: rgba(74, 222, 128, 0.2);
-            color: var(--accent-green);
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .status-badge::before {
-            content: '';
-            width: 8px; height: 8px;
-            background-color: var(--accent-green);
-            border-radius: 50%;
-            display: inline-block;
-        }
-
-        .device-status {
-            display: flex;
-            gap: 20px;
-            font-size: 15px;
-            color: var(--text-muted);
-        }
+        .header { display: flex; justify-content: space-between; align-items: center; background-color: var(--panel-bg); padding: 15px 25px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        .user-info { display: flex; align-items: center; gap: 15px; }
+        .avatar { width: 50px; height: 50px; background-color: #475569; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+        .status-badge { background-color: rgba(74, 222, 128, 0.2); color: var(--accent-green); padding: 5px 12px; border-radius: 20px; font-size: 14px; font-weight: bold; display: flex; align-items: center; gap: 5px; }
+        .status-badge.warning { background-color: rgba(248, 113, 113, 0.2); color: var(--accent-red); }
+        .status-badge::before { content: ''; width: 8px; height: 8px; background-color: var(--accent-green); border-radius: 50%; display: inline-block; }
+        .status-badge.warning::before { background-color: var(--accent-red); }
+        .device-status { display: flex; gap: 20px; font-size: 15px; color: var(--text-muted); }
         .device-status span { color: var(--accent-blue); font-weight: bold; }
 
         /* Main Grid 영역 */
-        .main-grid {
-            display: grid;
-            grid-template-columns: 1.2fr 1fr 1fr;
-            gap: 20px;
-            flex-grow: 1;
-            margin-bottom: 20px;
-        }
+        .main-grid { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 20px; flex-grow: 1; margin-bottom: 20px; }
+        .panel { background-color: var(--panel-bg); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        .panel-title { font-size: 16px; font-weight: 500; color: var(--text-muted); margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
 
-        .panel {
-            background-color: var(--panel-bg);
-            border-radius: 12px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-
-        .panel-title {
-            font-size: 16px;
-            font-weight: 500;
-            color: var(--text-muted);
-            margin-bottom: 15px;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 10px;
-        }
-
-        /* 24H 타임라인 커스텀 UI */
+        /* 타임라인 커스텀 UI */
         .timeline-container { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
         .timeline-labels { display: flex; justify-content: space-between; color: var(--text-muted); font-size: 12px; margin-bottom: 5px; }
         .timeline-track { width: 100%; height: 60px; background-color: #0f172a; border-radius: 8px; display: flex; overflow: hidden; position: relative; }
-        .segment { height: 100%; }
+        .segment { height: 100%; transition: width 0.5s ease; }
         .seg-active { background-color: var(--accent-blue); }
         .seg-idle { background-color: var(--accent-yellow); }
         .seg-sleep { background-color: transparent; }
@@ -133,103 +52,45 @@
         .legend-item { display: flex; align-items: center; gap: 5px; }
         .legend-box { width: 12px; height: 12px; border-radius: 3px; }
 
-        /* Chart 캔버스 래퍼 */
+        /* Chart 및 기타 UI */
         .chart-wrapper { position: relative; height: 160px; width: 100%; margin-bottom: 15px; }
-        
-        /* 마이크로 지표 하단 텍스트 */
         .micro-stats { display: flex; justify-content: space-between; text-align: center; margin-top: 10px; }
         .micro-stats div { background-color: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; width: 48%; }
         .micro-stats div h4 { font-size: 12px; color: var(--text-muted); font-weight: normal; margin-bottom: 5px; }
         .micro-stats div p { font-size: 20px; font-weight: bold; color: var(--accent-blue); }
-
-        /* 워드클라우드 */
         .word-cloud { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px; padding: 10px; }
-
-        /* Footer 영역 */
-        .footer {
-            background-color: var(--panel-bg);
-            border-radius: 12px;
-            padding: 15px 25px;
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
+        .footer { background-color: var(--panel-bg); border-radius: 12px; padding: 15px 25px; display: flex; flex-direction: column; gap: 5px; }
         .footer-title { color: var(--accent-blue); font-weight: bold; font-size: 14px; margin-bottom: 5px; }
         .footer-text { font-size: 14px; color: var(--text-main); line-height: 1.5; }
     </style>
 </head>
 <body>
 
-    <!-- JSON Mock Data & App Logic -->
-    <script>
-        // 🚀 [기획자 세팅 영역] 이 JSON 데이터를 변경하면 화면이 바뀝니다!
-        const mockData = {
-            profile: {
-                name: "김수현", age: 78, gender: "여", location: "서울시 마포구 성산동",
-                status: "정상", statusMessage: "규칙적인 일상 유지 중"
-            },
-            device: {
-                tv: "ON", tvTime: "2시간 15분", volume: 18, channel: "CH 19 TV조선",
-                light: "ON", temp: 23
-            },
-            // 24시간 활동 타임라인 (분 단위, 총 1440분)
-            // state: 'sleep'(꺼짐), 'active'(정상시청), 'idle'(무조작켜짐)
-            timeline: [
-                { durationMinutes: 390, state: 'sleep' }, // 00:00 ~ 06:30
-                { durationMinutes: 300, state: 'active' }, // 06:30 ~ 11:30
-                { durationMinutes: 60, state: 'idle' },    // 11:30 ~ 12:30 (잠깐 무조작)
-                { durationMinutes: 150, state: 'sleep' },  // 12:30 ~ 15:00 (외출/낮잠)
-                { durationMinutes: 240, state: 'active' }, // 15:00 ~ 19:00
-                { durationMinutes: 300, state: 'sleep' }   // 19:00 ~ 24:00 (미래시간)
-            ],
-            // 시간대별 마이크로 행동 (06시 ~ 20시)
-            labels: ['06','08','10','12','14','16','18','20'],
-            remoteClicks: [5, 45, 25, 10, 0, 30, 55, 20],
-            volumeLevels: [10, 22, 20, 15, 0, 16, 18, 14],
-            zappingAvg: "4분 30초",
-            zappingMax: "12회",
-            // 콘텐츠 및 정서
-            content: [45, 30, 15, 10], // 트로트, 뉴스, 교양, 기타
-            emotionScore: 75, // 0~100 (긍정)
-            keywords: [
-                { word: "미스터트롯", size: 24, color: "#38bdf8" },
-                { word: "날씨", size: 20, color: "#4ade80" },
-                { word: "재밌네", size: 28, color: "#facc15" },
-                { word: "전화", size: 14, color: "#94a3b8" },
-                { word: "허리", size: 16, color: "#f87171" }
-            ],
-            insights: "평소보다 30분 일찍 기상하셨으며, 오전 활동량이 어제 대비 15% 증가했습니다. 전반적으로 매우 규칙적이고 건강한 생활 리듬을 유지하고 계십니다.<br><span style='color:#94a3b8'>🛌 예상 취침: 22:30 ~ 23:00</span>"
-        };
-    </script>
-
     <!-- Header -->
     <div class="header">
         <div class="user-info">
             <div class="avatar">👵</div>
             <div>
-                <div style="font-size: 18px; font-weight: bold; margin-bottom: 3px;" id="profile-name"></div>
-                <div class="status-badge" id="profile-status"></div>
+                <div style="font-size: 18px; font-weight: bold; margin-bottom: 3px;" id="profile-name">로딩 중...</div>
+                <div class="status-badge" id="profile-status">데이터 연결 중</div>
             </div>
         </div>
         <div class="device-status">
-            <div>📺 TV: <span id="dev-tv"></span> (볼륨 <span id="dev-vol"></span>, <span id="dev-ch"></span>)</div>
-            <div>💡 조명: <span id="dev-light"></span></div>
-            <div>🌡️ 온도: <span id="dev-temp"></span>°C</div>
+            <div>📺 TV: <span id="dev-tv">-</span> (볼륨 <span id="dev-vol">-</span>, <span id="dev-ch">-</span>)</div>
+            <div>💡 조명: <span id="dev-light">-</span></div>
+            <div>🌡️ 온도: <span id="dev-temp">-</span>°C</div>
         </div>
     </div>
 
     <!-- Main Content -->
     <div class="main-grid">
-        <!-- Left Panel: 타임라인 -->
         <div class="panel">
             <div class="panel-title">24H 생활 활동 타임라인</div>
             <div class="timeline-container">
                 <div class="timeline-labels">
                     <span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>24:00</span>
                 </div>
-                <div class="timeline-track" id="timeline-track">
-                    <!-- JS로 바인딩 -->
-                </div>
+                <div class="timeline-track" id="timeline-track"></div>
                 <div class="timeline-legend">
                     <div class="legend-item"><div class="legend-box seg-active"></div> 능동 시청 (조작 O)</div>
                     <div class="legend-item"><div class="legend-box seg-idle"></div> 수동 시청 (조작 X)</div>
@@ -238,25 +99,15 @@
             </div>
         </div>
 
-        <!-- Middle Panel: 마이크로 행동 -->
         <div class="panel">
             <div class="panel-title">마이크로 행동 패턴 (리모컨/볼륨)</div>
-            <div class="chart-wrapper">
-                <canvas id="behaviorChart"></canvas>
-            </div>
+            <div class="chart-wrapper"><canvas id="behaviorChart"></canvas></div>
             <div class="micro-stats">
-                <div>
-                    <h4>평균 채널 체류 시간</h4>
-                    <p id="stat-zap-avg"></p>
-                </div>
-                <div>
-                    <h4>분당 최대 채널 변경</h4>
-                    <p id="stat-zap-max"></p>
-                </div>
+                <div><h4>평균 채널 체류 시간</h4><p id="stat-zap-avg">-</p></div>
+                <div><h4>분당 최대 채널 변경</h4><p id="stat-zap-max">-</p></div>
             </div>
         </div>
 
-        <!-- Right Panel: 정서 및 콘텐츠 -->
         <div class="panel">
             <div class="panel-title">정서 및 콘텐츠 선호도</div>
             <div style="display:flex; height: 140px; margin-bottom: 20px;">
@@ -270,137 +121,110 @@
                 </div>
             </div>
             <div class="panel-title" style="border:none; padding:0; margin:0; font-size:14px;">최근 발화 키워드</div>
-            <div class="word-cloud" id="word-cloud">
-                <!-- JS 바인딩 -->
-            </div>
+            <div class="word-cloud" id="word-cloud"></div>
         </div>
     </div>
 
     <!-- Footer -->
     <div class="footer">
         <div class="footer-title">🤖 AI 종합 인사이트 및 케어 예측</div>
-        <div class="footer-text" id="ai-insights"></div>
+        <div class="footer-text" id="ai-insights">데이터를 분석 중입니다...</div>
     </div>
 
-    <!-- 렌더링 스크립트 -->
+    <!-- 데이터 포팅 및 렌더링 스크립트 -->
     <script>
-        // 1. 기본 데이터 바인딩
-        document.getElementById('profile-name').innerText = `${mockData.profile.name} 어르신 (${mockData.profile.age}세, ${mockData.profile.gender})`;
-        document.getElementById('profile-status').innerText = mockData.profile.status;
-        document.getElementById('dev-tv').innerText = mockData.device.tv;
-        document.getElementById('dev-vol').innerText = mockData.device.volume;
-        document.getElementById('dev-ch').innerText = mockData.device.channel;
-        document.getElementById('dev-light').innerText = mockData.device.light;
-        document.getElementById('dev-temp').innerText = mockData.device.temp;
-        document.getElementById('stat-zap-avg').innerText = mockData.zappingAvg;
-        document.getElementById('stat-zap-max').innerText = mockData.zappingMax;
-        document.getElementById('ai-insights').innerHTML = mockData.insights;
-
-        // 2. 타임라인 렌더링 (하루 1440분 기준 % 계산)
-        const track = document.getElementById('timeline-track');
-        const totalMinutes = 1440;
-        mockData.timeline.forEach(seg => {
-            const widthPct = (seg.durationMinutes / totalMinutes) * 100;
-            const div = document.createElement('div');
-            div.className = `segment seg-${seg.state}`;
-            div.style.width = `${widthPct}%`;
-            track.appendChild(div);
-        });
-
-        // 3. 워드 클라우드 렌더링
-        const wcContainer = document.getElementById('word-cloud');
-        mockData.keywords.forEach(kw => {
-            const span = document.createElement('span');
-            span.innerText = kw.word;
-            span.style.fontSize = `${kw.size}px`;
-            span.style.color = kw.color;
-            span.style.fontWeight = 'bold';
-            wcContainer.appendChild(span);
-        });
-
         // Chart.js 공통 설정 (다크테마)
         Chart.defaults.color = '#94a3b8';
         Chart.defaults.font.family = "'Noto Sans KR', sans-serif";
 
-        // 4. 행동 패턴 차트 (혼합형: 막대 + 꺾은선)
-        const ctxBehavior = document.getElementById('behaviorChart').getContext('2d');
-        new Chart(ctxBehavior, {
-            type: 'bar',
-            data: {
-                labels: mockData.labels,
-                datasets: [
-                    {
-                        label: '볼륨 레벨 (Line)',
-                        data: mockData.volumeLevels,
-                        type: 'line',
-                        borderColor: '#4ade80',
-                        backgroundColor: 'rgba(74, 222, 128, 0.1)',
-                        fill: true,
-                        tension: 0.4,
-                        yAxisID: 'y'
-                    },
-                    {
-                        label: '리모컨 클릭수 (Bar)',
-                        data: mockData.remoteClicks,
-                        backgroundColor: '#38bdf8',
-                        borderRadius: 4,
-                        yAxisID: 'y1'
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                    x: { grid: { color: '#334155' } },
-                    y: { type: 'linear', display: false, position: 'left' }, // 볼륨축 숨김
-                    y1: { type: 'linear', display: false, position: 'right' } // 클릭축 숨김
-                }
+        // JSON 데이터 비동기 호출
+        async function loadData() {
+            try {
+                // 외부 json 파일 호출 (포팅)
+                const response = await fetch('data.json'); 
+                if (!response.ok) throw new Error('데이터를 불러올 수 없습니다.');
+                const mockData = await response.json();
+                
+                renderDashboard(mockData);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                document.getElementById('ai-insights').innerHTML = `<span style="color:#f87171;">🚨 데이터를 불러오는 데 실패했습니다. 로컬 서버 환경(Live Server 등)에서 실행 중인지 확인해주세요.</span>`;
             }
-        });
+        }
 
-        // 5. 콘텐츠 선호도 파이 차트
-        const ctxContent = document.getElementById('contentChart').getContext('2d');
-        new Chart(ctxContent, {
-            type: 'doughnut',
-            data: {
-                labels: ['트로트', '뉴스', '건강', '기타'],
-                datasets: [{
-                    data: mockData.content,
-                    backgroundColor: ['#38bdf8', '#4ade80', '#facc15', '#94a3b8'],
-                    borderWidth: 0
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false }, tooltip: { enabled: true } },
-                cutout: '70%'
-            }
-        });
+        // 받아온 데이터로 화면 그리기 함수
+        function renderDashboard(data) {
+            // 1. 텍스트 데이터 바인딩
+            document.getElementById('profile-name').innerText = `${data.profile.name} 어르신 (${data.profile.age}세, ${data.profile.gender})`;
+            
+            const statusEl = document.getElementById('profile-status');
+            statusEl.innerText = data.profile.status;
+            // '경고'나 '주의' 상태면 빨간색 스타일 적용
+            if (data.profile.status !== '정상') statusEl.classList.add('warning');
+            
+            document.getElementById('dev-tv').innerText = data.device.tv;
+            document.getElementById('dev-vol').innerText = data.device.volume;
+            document.getElementById('dev-ch').innerText = data.device.channel;
+            document.getElementById('dev-light').innerText = data.device.light;
+            document.getElementById('dev-temp').innerText = data.device.temp;
+            document.getElementById('stat-zap-avg').innerText = data.zappingAvg;
+            document.getElementById('stat-zap-max').innerText = data.zappingMax;
+            document.getElementById('ai-insights').innerHTML = data.insights;
 
-        // 6. 감정 상태 게이지 차트 (반원 도넛 차트)
-        const ctxEmotion = document.getElementById('emotionChart').getContext('2d');
-        new Chart(ctxEmotion, {
-            type: 'doughnut',
-            data: {
-                labels: ['현재 감정', ''],
-                datasets: [{
-                    data: [mockData.emotionScore, 100 - mockData.emotionScore],
-                    backgroundColor: ['#facc15', '#334155'], // 노란색으로 긍정 표시
-                    borderWidth: 0
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                rotation: -90,
-                circumference: 180,
-                cutout: '75%',
-                plugins: { legend: { display: false }, tooltip: { enabled: false } }
-            }
-        });
+            // 2. 타임라인 렌더링
+            const track = document.getElementById('timeline-track');
+            track.innerHTML = ''; // 초기화
+            const totalMinutes = 1440;
+            data.timeline.forEach(seg => {
+                const widthPct = (seg.durationMinutes / totalMinutes) * 100;
+                const div = document.createElement('div');
+                div.className = `segment seg-${seg.state}`;
+                div.style.width = `${widthPct}%`;
+                track.appendChild(div);
+            });
+
+            // 3. 워드 클라우드 렌더링
+            const wcContainer = document.getElementById('word-cloud');
+            wcContainer.innerHTML = ''; // 초기화
+            data.keywords.forEach(kw => {
+                const span = document.createElement('span');
+                span.innerText = kw.word;
+                span.style.fontSize = `${kw.size}px`;
+                span.style.color = kw.color;
+                span.style.fontWeight = 'bold';
+                wcContainer.appendChild(span);
+            });
+
+            // 4. 행동 패턴 차트
+            new Chart(document.getElementById('behaviorChart').getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: data.labels,
+                    datasets: [
+                        { label: '볼륨', data: data.volumeLevels, type: 'line', borderColor: '#4ade80', backgroundColor: 'rgba(74, 222, 128, 0.1)', fill: true, tension: 0.4, yAxisID: 'y' },
+                        { label: '클릭수', data: data.remoteClicks, backgroundColor: '#38bdf8', borderRadius: 4, yAxisID: 'y1' }
+                    ]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { color: '#334155' } }, y: { display: false }, y1: { display: false } } }
+            });
+
+            // 5. 콘텐츠 파이 차트
+            new Chart(document.getElementById('contentChart').getContext('2d'), {
+                type: 'doughnut',
+                data: { labels: ['트로트', '뉴스', '건강', '기타'], datasets: [{ data: data.content, backgroundColor: ['#38bdf8', '#4ade80', '#facc15', '#94a3b8'], borderWidth: 0 }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, cutout: '70%' }
+            });
+
+            // 6. 감정 상태 차트
+            new Chart(document.getElementById('emotionChart').getContext('2d'), {
+                type: 'doughnut',
+                data: { labels: ['현재 감정', ''], datasets: [{ data: [data.emotionScore, 100 - data.emotionScore], backgroundColor: ['#facc15', '#334155'], borderWidth: 0 }] },
+                options: { responsive: true, maintainAspectRatio: false, rotation: -90, circumference: 180, cutout: '75%', plugins: { legend: { display: false }, tooltip: { enabled: false } } }
+            });
+        }
+
+        // 페이지 로드 시 데이터 호출 시작
+        document.addEventListener('DOMContentLoaded', loadData);
     </script>
 </body>
 </html>
