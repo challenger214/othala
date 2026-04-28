@@ -219,6 +219,7 @@ export default function App() {
       } else if (e.key === '3') {
         e.preventDefault();
         setShowRecommendation(true);
+        startRecording();
       }
     };
 
@@ -233,6 +234,16 @@ export default function App() {
       stopRecording();
     }
   }, [transcript, isRecording, showNotification, stopRecording]);
+
+  // Handle voice commands for recommendation
+  useEffect(() => {
+    if (isRecording && showRecommendation && (transcript.includes('바꿔줘') || transcript.includes('그래') || transcript.includes('응'))) {
+      setChannel(31);
+      triggerOSD();
+      setShowRecommendation(false);
+      stopRecording();
+    }
+  }, [transcript, isRecording, showRecommendation, stopRecording, triggerOSD]);
 
   useEffect(() => {
     triggerOSD();
@@ -363,7 +374,7 @@ export default function App() {
                       이상 동작이 감지되었습니다. 괜찮으신가요? "확인"버튼을 누르시거나 "응"이라고 답해주세요
                     </p>
                     <div className="flex justify-end">
-                      <button onClick={() => setShowNotification(false)} className="bg-red-600 hover:bg-red-500 text-white px-6 py-2 rounded-md text-sm font-bold transition-colors shadow-lg">확인</button>
+                      <button onClick={() => { setShowNotification(false); stopRecording(); }} className="bg-red-600 hover:bg-red-500 text-white px-6 py-2 rounded-md text-sm font-bold transition-colors shadow-lg">확인</button>
                     </div>
                   </div>
                 </div>
@@ -373,7 +384,7 @@ export default function App() {
             {/* Recommendation Notification */}
             {showRecommendation && (
               <div className="absolute top-8 right-8 z-50 animate-in fade-in slide-in-from-top-4 duration-300">
-                <div className="bg-blue-900/80 backdrop-blur-md border border-blue-400/30 rounded-lg p-5 shadow-2xl max-w-sm flex flex-col gap-4">
+                <div className="bg-black/80 backdrop-blur-md border border-blue-400/30 rounded-lg p-5 shadow-2xl max-w-sm flex flex-col gap-4">
                   <p className="text-white text-sm md:text-base leading-relaxed font-medium">
                     보고싶은 방송이 없으시면, 좋아하실만한 방송을 틀어드리겠습니다. 미스터트롯 방영중인데 틀어드릴까요?
                   </p>
@@ -389,6 +400,7 @@ export default function App() {
                         setChannel(31);
                         triggerOSD();
                         setShowRecommendation(false);
+                        stopRecording();
                       }}
                       className="bg-blue-500 hover:bg-blue-400 text-white px-4 py-2 rounded-md text-sm font-bold transition-colors shadow-lg active:scale-95"
                     >
