@@ -21,13 +21,17 @@
         body { background-color: var(--bg-dark); color: var(--text-main); padding: 20px; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
         /* Header (고정 높이) */
-        .header { display: flex; justify-content: space-between; align-items: center; background-color: var(--panel-bg); padding: 15px 25px; border-radius: 12px; margin-bottom: 20px; flex-shrink: 0; }
+        .header { display: flex; justify-content: space-between; align-items: center; background-color: var(--panel-bg); padding: 15px 25px; border-radius: 12px; margin-bottom: 20px; flex-shrink: 0; transition: all 0.3s ease; border: 1px solid transparent; }
         .user-info { display: flex; align-items: center; gap: 15px; }
         .avatar { width: 50px; height: 50px; background-color: #475569; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; }
-        .status-badge { background-color: rgba(74, 222, 128, 0.2); color: var(--accent-green); padding: 5px 12px; border-radius: 20px; font-size: 14px; font-weight: bold; display: flex; align-items: center; gap: 5px; }
-        .status-badge.warning { background-color: rgba(248, 113, 113, 0.2); color: var(--accent-red); }
+        
+        /* 🚨 뱃지 디자인 및 긴급 애니메이션 */
+        .status-badge { background-color: rgba(74, 222, 128, 0.2); color: var(--accent-green); padding: 5px 12px; border-radius: 20px; font-size: 14px; font-weight: bold; display: flex; align-items: center; gap: 5px; transition: all 0.3s; }
         .status-badge::before { content: ''; width: 8px; height: 8px; background-color: var(--accent-green); border-radius: 50%; display: inline-block; }
-        .status-badge.warning::before { background-color: var(--accent-red); }
+        
+        .status-badge.warning { background-color: rgba(248, 113, 113, 0.2); color: var(--accent-red); animation: pulse-bg 1.5s infinite; }
+        .status-badge.warning::before { background-color: var(--accent-red); animation: pulse-dot 1.5s infinite; }
+        
         .device-status { display: flex; gap: 20px; font-size: 15px; color: var(--text-muted); }
         .device-status span { color: var(--accent-blue); font-weight: bold; }
 
@@ -36,13 +40,12 @@
         .panel { background-color: var(--panel-bg); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; min-height: 0; }
         .panel-title { font-size: 16px; font-weight: 500; color: var(--text-muted); margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; flex-shrink: 0; }
 
-        /* 🚨 타임라인 영역 (트랙은 중앙 고정, 마커는 지그재그 배치) */
+        /* 타임라인 영역 */
         .timeline-container { display: flex; flex-direction: column; flex: 1; min-height: 0; }
         .timeline-visual-area { position: relative; flex: 1; min-height: 0; margin: 10px 0; } 
         .timeline-markers { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; }
         
-        /* 🚨 마커 그룹 높이를 50%로 설정하여 트랙 정중앙까지만 닿도록 함 */
-        .marker-group { position: absolute; height: 50%; display: flex; align-items: center; transform: translateX(-50%); }
+        .marker-group { position: absolute; height: 50%; display: flex; align-items: center; transform: translateX(-50%); transition: left 0s; }
         .marker-top { top: 0; flex-direction: column; justify-content: flex-start; }
         .marker-bottom { bottom: 0; flex-direction: column-reverse; justify-content: flex-start; }
         
@@ -55,9 +58,8 @@
         .marker-label { color: #fff; font-size: 12px; font-weight: 500; }
         .marker-line { width: 2px; flex: 1; background-color: rgba(56, 189, 248, 0.5); }
         
-        /* 트랙을 정중앙(top: 50%)에 절대 위치로 배치 */
         .timeline-track { position: absolute; top: 50%; transform: translateY(-50%); height: 35%; width: 100%; background-color: #0f172a; border-radius: 8px; display: flex; overflow: hidden; border: 1px solid var(--border-color); z-index: 5; }
-        .segment { height: 100%; transition: width 0.5s ease; }
+        .segment { height: 100%; transition: width 0s; }
         .seg-active { background-color: var(--accent-blue); }
         .seg-idle { background-color: var(--accent-yellow); }
         .seg-sleep { background-color: transparent; }
@@ -92,14 +94,39 @@
         .word-cloud { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px; flex-shrink: 0; }
         
         /* Footer */
-        .footer { background-color: var(--panel-bg); border-radius: 12px; padding: 15px 25px; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
+        .footer { background-color: var(--panel-bg); border-radius: 12px; padding: 15px 25px; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; transition: background-color 0.5s; }
         .footer-title { color: var(--accent-blue); font-weight: bold; font-size: 16px; }
         .footer-text { font-size: 15px; color: var(--text-main); line-height: 1.5; background-color: rgba(255,255,255,0.02); padding: 12px 15px; border-radius: 8px; border-left: 4px solid var(--accent-blue); }
+
+        /* 🚨 애니메이션 Keyframes */
+        @keyframes pulse-dot {
+            0% { box-shadow: 0 0 0 0 rgba(248, 113, 113, 0.7); }
+            70% { box-shadow: 0 0 0 8px rgba(248, 113, 113, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(248, 113, 113, 0); }
+        }
+        @keyframes pulse-bg {
+            0% { background-color: rgba(248, 113, 113, 0.2); }
+            50% { background-color: rgba(248, 113, 113, 0.4); }
+            100% { background-color: rgba(248, 113, 113, 0.2); }
+        }
+        @keyframes emergency-border {
+            0% { border-color: rgba(248, 113, 113, 0.2); box-shadow: 0 0 10px rgba(248,113,113,0); }
+            50% { border-color: rgba(248, 113, 113, 0.8); box-shadow: 0 0 20px rgba(248,113,113,0.3); }
+            100% { border-color: rgba(248, 113, 113, 0.2); box-shadow: 0 0 10px rgba(248,113,113,0); }
+        }
+        @keyframes data-update-flash {
+            0% { background-color: rgba(56, 189, 248, 0.3); }
+            100% { background-color: rgba(255,255,255,0.02); }
+        }
+
+        .header.emergency { animation: emergency-border 1.5s infinite; }
+        .footer-text.updated { animation: data-update-flash 1s ease-out; }
+
     </style>
 </head>
 <body>
 
-    <div class="header">
+    <div class="header" id="main-header">
         <div class="user-info">
             <div class="avatar">🧓🏻</div>
             <div>
@@ -115,7 +142,6 @@
     </div>
 
     <div class="main-grid">
-        <!-- 1. 타임라인 패널 -->
         <div class="panel">
             <div class="panel-title">24H 생활 활동 타임라인</div>
             <div class="timeline-container">
@@ -134,7 +160,6 @@
             </div>
         </div>
 
-        <!-- 2. 마이크로 행동 패널 -->
         <div class="panel">
             <div class="panel-title">마이크로 행동 패턴 (리모컨/볼륨)</div>
             <div class="chart-wrapper">
@@ -146,7 +171,6 @@
             </div>
         </div>
 
-        <!-- 3. 정서 및 콘텐츠 패널 -->
         <div class="panel">
             <div class="panel-title">정서 및 콘텐츠 선호도</div>
             <div class="doughnut-charts-container">
@@ -200,11 +224,28 @@
         function renderDashboard(data) {
             document.getElementById('profile-name').innerText = `${data.profile.name} 어르신 (${data.profile.age}세, ${data.profile.gender})`;
             
+            // 🚨 애니메이션 관련 DOM 조작
             const statusEl = document.getElementById('profile-status');
-            statusEl.innerText = data.profile.status;
-            statusEl.classList.remove('warning');
-            if (data.profile.status !== '정상') statusEl.classList.add('warning');
+            const headerEl = document.getElementById('main-header');
+            const footerTextEl = document.getElementById('ai-insights');
+
+            // 상태 텍스트 입력 및 클래스 초기화
+            statusEl.innerText = data.profile.status || data.profile.statusMessage;
+            statusEl.className = 'status-badge';
+            headerEl.classList.remove('emergency');
             
+            // 🚨 빨간색(경고) 뱃지로 판단할 조건 확장 (어려움, 위험, 🚨 이모지 등)
+            const statusText = statusEl.innerText;
+            if (statusText.includes('경고') || statusText.includes('긴급') || statusText.includes('어려움') || statusText.includes('위험') || statusText.includes('🚨')) {
+                statusEl.classList.add('warning');
+                headerEl.classList.add('emergency');
+            }
+
+            // 시나리오 변경 시각 효과 (파란색 플래시)
+            footerTextEl.classList.remove('updated');
+            void footerTextEl.offsetWidth; // 브라우저 리플로우 강제 유발
+            footerTextEl.classList.add('updated');
+
             document.getElementById('dev-tv').innerText = data.device.tv;
             document.getElementById('dev-vol').innerText = data.device.volume;
             document.getElementById('dev-ch').innerText = data.device.channel;
@@ -212,9 +253,8 @@
             document.getElementById('dev-temp').innerText = data.device.temp;
             document.getElementById('stat-zap-avg').innerText = data.zappingAvg;
             document.getElementById('stat-zap-max').innerText = data.zappingMax;
-            document.getElementById('ai-insights').innerHTML = data.insights;
+            footerTextEl.innerHTML = data.insights;
 
-            // 🚨 지그재그 마커 렌더링 로직
             const markersContainer = document.getElementById('timeline-markers');
             markersContainer.innerHTML = '';
             if(data.events) {
@@ -223,7 +263,6 @@
                     const pct = (((hours * 60) + minutes) / 1440) * 100;
 
                     const markerGroup = document.createElement('div');
-                    // 짝수는 위(top), 홀수는 아래(bottom)로 클래스 부여
                     const positionClass = index % 2 === 0 ? 'marker-top' : 'marker-bottom';
                     markerGroup.className = `marker-group ${positionClass}`;
                     markerGroup.style.left = `${pct}%`;
@@ -265,7 +304,7 @@
             if (contentChartInstance) contentChartInstance.destroy();
             if (emotionChartInstance) emotionChartInstance.destroy();
 
-            // 행동 패턴 차트
+            // 🚨 차트 애니메이션 끄기 (animation: false)
             behaviorChartInstance = new Chart(document.getElementById('behaviorChart').getContext('2d'), {
                 type: 'bar',
                 data: {
@@ -276,21 +315,21 @@
                     ]
                 },
                 options: { 
+                    animation: false, 
                     responsive: true, maintainAspectRatio: false, 
                     plugins: { legend: { display: false }, datalabels: { display: false } }, 
                     scales: { x: { grid: { color: '#334155' } }, y: { display: false }, y1: { display: false } } 
                 }
             });
 
-            // 장르 선호도 차트
-            const contentLabels = ['트로트', '뉴스', '건강', '기타'];
             contentChartInstance = new Chart(document.getElementById('contentChart').getContext('2d'), {
                 type: 'doughnut',
                 data: { 
-                    labels: contentLabels, 
+                    labels: ['트로트', '뉴스', '건강', '기타'], 
                     datasets: [{ data: data.content, backgroundColor: ['#38bdf8', '#4ade80', '#facc15', '#64748b'], borderWidth: 0 }] 
                 },
                 options: { 
+                    animation: false, 
                     responsive: true, maintainAspectRatio: false, cutout: '50%',
                     plugins: { 
                         legend: { display: false },
@@ -298,22 +337,19 @@
                         datalabels: { 
                             color: '#fff',
                             font: { weight: 'bold', size: 12 },
-                            formatter: (value, ctx) => {
-                                if(value < 10) return '';
-                                return contentLabels[ctx.dataIndex] + '\n' + value + '%';
-                            },
+                            formatter: (value, ctx) => value < 10 ? '' : ['트로트', '뉴스', '건강', '기타'][ctx.dataIndex] + '\n' + value + '%',
                             textAlign: 'center'
                         }
                     } 
                 }
             });
 
-            // 감정 상태 반원 차트
             document.getElementById('emotion-score-text').innerText = data.emotionScore + '점';
             emotionChartInstance = new Chart(document.getElementById('emotionChart').getContext('2d'), {
                 type: 'doughnut',
                 data: { labels: ['긍정 지수', ''], datasets: [{ data: [data.emotionScore, 100 - data.emotionScore], backgroundColor: ['#facc15', '#334155'], borderWidth: 0 }] },
                 options: { 
+                    animation: false, 
                     responsive: true, maintainAspectRatio: false, rotation: -90, circumference: 180, cutout: '75%', 
                     plugins: { legend: { display: false }, tooltip: { enabled: false }, datalabels: { display: false } } 
                 }
