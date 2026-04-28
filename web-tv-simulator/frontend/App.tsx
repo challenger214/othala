@@ -65,6 +65,7 @@ export default function App() {
   const [showNotification, setShowNotification] = useState(false);
   const [showRecommendation, setShowRecommendation] = useState(false);
   const [showSleepNotification, setShowSleepNotification] = useState(false);
+  const [brightness, setBrightness] = useState(100);
   
   // Volume state
   const [volume, setVolume] = useState(10);
@@ -75,6 +76,7 @@ export default function App() {
   const [transcript, setTranscript] = useState('');
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const recordingTimeoutRef = useRef<number | null>(null);
+  const volumeIntervalRef = useRef<number | null>(null);
   
   const osdTimeoutRef = useRef<number | null>(null);
   const changeTimeoutRef = useRef<number | null>(null);
@@ -188,7 +190,7 @@ export default function App() {
 
   const changeVolume = useCallback((direction: 'up' | 'down') => {
     setVolume((prev) => {
-      let newVolume = direction === 'up' ? prev + 5 : prev - 5;
+      let newVolume = direction === 'up' ? prev + 1 : prev - 1;
       if (newVolume > 100) newVolume = 100;
       if (newVolume < 0) newVolume = 0;
       return newVolume;
@@ -253,6 +255,47 @@ export default function App() {
     triggerOSD();
   }, [triggerOSD]);
 
+  useEffect(() => {
+    const cleanupInterval = () => {
+      if (volumeIntervalRef.current) {
+        clearInterval(volumeIntervalRef.current);
+        volumeIntervalRef.current = null;
+      }
+    };
+
+    if (showSleepNotification) {
+      setBrightness(40);
+
+      const targetVolume = 2; // Target volume is now 2
+      const startVolume = Math.floor(volume);
+
+      if (startVolume > targetVolume) {
+        const duration = 5000; // Duration is now 5 seconds
+        const totalDecrement = startVolume - targetVolume;
+        const intervalTime = duration / totalDecrement; // Time per integer step
+
+        cleanupInterval();
+
+        volumeIntervalRef.current = window.setInterval(() => {
+          setVolume(prevVolume => {
+            if (prevVolume <= targetVolume) {
+              cleanupInterval();
+              return targetVolume;
+            }
+            triggerVolumeOSD();
+            // Decrement by 1 and ensure it doesn't go past the target
+            return Math.max(prevVolume - 1, targetVolume);
+          });
+        }, intervalTime);
+      }
+    } else {
+      setBrightness(100);
+      cleanupInterval();
+    }
+
+    return cleanupInterval;
+  }, [showSleepNotification, triggerVolumeOSD, volume]);
+
   const renderVolumeIcon = () => {
     if (volume === 0) return <VolumeX className="text-white mb-1" size={14} />;
     if (volume < 50) return <Volume1 className="text-white mb-1" size={14} />;
@@ -265,7 +308,13 @@ export default function App() {
       {/* TV Set Container */}
       <div className="relative w-full bg-neutral-900 p-1 md:p-2 shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-neutral-700">
         <div className="relative bg-black overflow-hidden shadow-inner border-2 border-neutral-950">
-          <div className="relative w-full aspect-video bg-black overflow-hidden">
+          <div 
+            className="relative w-full aspect-video bg-black overflow-hidden"
+            style={{ 
+              filter: `brightness(${brightness}%)`,
+              transition: 'filter 5s linear'
+            }}
+          >
             
             {/* Channel Content */}
             <div 
