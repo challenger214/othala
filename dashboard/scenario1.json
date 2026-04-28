@@ -1,0 +1,31 @@
+{
+    "profile": {
+      "name": "김수현", "age": 78, "gender": "여", "location": "서울시 마포구 성산동",
+      "status": "🚨 긴급 알림", "statusMessage": "4시간째 기기 무반응 (응답 없음)"
+    },
+    "device": {
+      "tv": "ON", "tvTime": "4시간 15분", "volume": 18, "channel": "CH 19 TV조선",
+      "light": "ON", "temp": 23
+    },
+    "events": [
+      { "time": "05:30", "label": "기상", "icon": "🔆" },
+      { "time": "12:00", "label": "마지막 조작", "icon": "🎮" },
+      { "time": "16:00", "label": "경고 발생", "icon": "🚨" }
+    ],
+    "timeline": [
+      { "durationMinutes": 330, "state": "sleep" }, 
+      { "durationMinutes": 390, "state": "active" },
+      { "durationMinutes": 240, "state": "idle" }
+    ],
+    "labels": ["06시", "08시", "10시", "12시", "13시", "14시", "15시", "16시"],
+    "remoteClicks": [2, 45, 20, 15, 0, 0, 0, 0],
+    "volumeLevels": [8, 22, 18, 18, 18, 18, 18, 18],
+    "zappingAvg": "경고", "zappingMax": "0회 (최근 4시간)",
+    "content": [45, 30, 15, 10], "emotionScore": 30,
+    "keywords": [
+      { "word": "응답없음", "size": 30, "color": "#f87171" },
+      { "word": "무반응", "size": 24, "color": "#f87171" },
+      { "word": "긴급호출대기", "size": 20, "color": "#facc15" }
+    ],
+    "insights": "<span style='color:#f87171; font-weight:bold;'>🚨 AI 위기 경보: 골든타임 프로토콜 가동 중</span><br><br>평소 패턴과 달리 4시간 연속 리모컨 조작 및 음성 반응이 없습니다. TV를 통한 1차 음성 확인 시도에 응답하지 않아, 즉시 자녀(보호자) 및 지자체 관제 센터로 긴급 푸시 알람을 발송했습니다."
+}

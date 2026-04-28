@@ -1,0 +1,33 @@
+{
+    "profile": {
+      "name": "김수현", "age": 78, "gender": "여", "location": "서울시 마포구 성산동",
+      "status": "🌙 수면 모드", "statusMessage": "취침 모드 자동화 루틴 실행됨"
+    },
+    "device": {
+      "tv": "ON (15분 후 꺼짐)", "tvTime": "5시간 10분", "volume": 5, "channel": "CH 9 KBS1",
+      "light": "OFF", "temp": 25
+    },
+    "events": [
+      { "time": "18:00", "label": "귀가", "icon": "🏠" },
+      { "time": "22:45", "label": "수면 감지", "icon": "🛌" },
+      { "time": "22:50", "label": "환경 제어", "icon": "🌙" }
+    ],
+    "timeline": [
+      { "durationMinutes": 480, "state": "sleep" }, 
+      { "durationMinutes": 420, "state": "active" },
+      { "durationMinutes": 180, "state": "sleep" },
+      { "durationMinutes": 240, "state": "active" },
+      { "durationMinutes": 45, "state": "idle" }
+    ],
+    "labels": ["16시", "17시", "18시", "19시", "20시", "21시", "22시", "23시"],
+    "remoteClicks": [10, 5, 25, 42, 35, 10, 2, 0],
+    "volumeLevels": [15, 15, 18, 20, 18, 14, 8, 5],
+    "zappingAvg": "15분 00초", "zappingMax": "3회",
+    "content": [20, 50, 20, 10], "emotionScore": 60,
+    "keywords": [
+      { "word": "졸려", "size": 24, "color": "#94a3b8" },
+      { "word": "내일 날씨", "size": 18, "color": "#4ade80" },
+      { "word": "뉴스", "size": 20, "color": "#38bdf8" }
+    ],
+    "insights": "최근 45분간 채널 변경이 없고 볼륨을 낮게 설정한 채널(KBS1)에 고정되어 있어 <span style='color:#38bdf8; font-weight:bold;'>수면 진입 확률이 95%</span>로 측정되었습니다.<br><br>💡 스마트홈 연동: 어르신의 숙면을 위해 거실 조명을 자동으로 소등(OFF)했으며, TV 볼륨을 서서히 줄인 뒤 15분 후 전원을 차단하여 완벽한 수면 환경을 조성합니다."
+}

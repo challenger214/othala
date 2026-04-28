@@ -152,17 +152,26 @@
         Chart.defaults.color = '#94a3b8';
         Chart.defaults.font.family = "'Noto Sans KR', sans-serif";
 
-        async function loadData() {
-            try {
-                const response = await fetch('data.json'); 
-                if (!response.ok) throw new Error('데이터를 불러올 수 없습니다.');
-                const mockData = await response.json();
-                renderDashboard(mockData);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-                document.getElementById('ai-insights').innerHTML = `<span style="color:#f87171;">🚨 데이터를 불러오는 데 실패했습니다. 로컬 서버 환경에서 실행 중인지 확인해주세요.</span>`;
-            }
+    // 기존 loadData 함수를 아래와 같이 수정하세요.
+    async function loadData(url = 'data.json') {
+        try {
+            const response = await fetch(url); 
+            if (!response.ok) throw new Error('데이터를 불러올 수 없습니다.');
+            const mockData = await response.json();
+            renderDashboard(mockData);
+        } catch (error) {
+            console.error('Error fetching data:', error);
         }
+    }
+
+// 🚀 라이브 데모용 키보드 단축키 이벤트 추가 (1, 2, 3, 0 번호키)
+document.addEventListener('keydown', (event) => {
+    if (event.key === '0') loadData('data.json');       // 기본 화면
+    if (event.key === '1') loadData('scenario1.json');  // 시나리오 1: 무반응 감지
+    if (event.key === '2') loadData('scenario2.json');  // 시나리오 2: 정서 케어
+    if (event.key === '3') loadData('scenario3.json');  // 시나리오 3: 수면 환경 제어
+});
+
 
         function renderDashboard(data) {
             document.getElementById('profile-name').innerText = `${data.profile.name} 어르신 (${data.profile.age}세, ${data.profile.gender})`;
