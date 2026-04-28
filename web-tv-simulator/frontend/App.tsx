@@ -1,21 +1,47 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { MonitorPlay, AlertCircle, Volume2, Volume1, VolumeX } from 'lucide-react';
 
-const TOTAL_CHANNELS = 10;
+// Define only the available channels
+const AVAILABLE_CHANNELS = [1, 9, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29];
 
-// Distinct visual styles for each channel to make them feel different
-const CHANNEL_STYLES = [
-  'bg-gradient-to-br from-blue-900 via-blue-800 to-blue-950',
-  'bg-gradient-to-br from-red-900 via-red-800 to-red-950',
-  'bg-gradient-to-br from-green-900 via-green-800 to-green-950',
-  'bg-gradient-to-br from-purple-900 via-purple-800 to-purple-950',
-  'bg-gradient-to-br from-amber-900 via-amber-800 to-amber-950',
-  'bg-gradient-to-br from-pink-900 via-pink-800 to-pink-950',
-  'bg-gradient-to-br from-indigo-900 via-indigo-800 to-indigo-950',
-  'bg-gradient-to-br from-teal-900 via-teal-800 to-teal-950',
-  'bg-gradient-to-br from-orange-900 via-orange-800 to-orange-950',
-  'bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950',
-];
+const YOUTUBE_MAPPING: Record<number, string> = {
+  1: 'jfKfPfyJRdk', // Lofi Girl
+  9: 'o6-IbLjURyc', // Yonhap News TV
+  19: 'M9MRGuPToEk', // TV Chosun
+  20: 'P8QordVAUyU', // VOD
+};
+
+const NAME_MAPPING: Record<number, string> = {
+  1: 'Lofi Girl',
+  9: 'KBS',
+  19: 'TV Chosun',
+  20: 'VOD',
+  21: 'Channel 21',
+  22: 'Channel 22',
+  23: 'Channel 23',
+  24: 'Channel 24',
+  25: 'Channel 25',
+  26: 'Channel 26',
+  27: 'Channel 27',
+  28: 'Channel 28',
+  29: 'Channel 29',
+};
+
+const STYLE_MAPPING: Record<number, string> = {
+  1: 'bg-gradient-to-br from-blue-900 via-blue-800 to-blue-950',
+  9: 'bg-gradient-to-br from-orange-900 via-orange-800 to-orange-950',
+  19: 'bg-gradient-to-br from-red-900 via-red-800 to-red-950',
+  20: 'bg-gradient-to-br from-purple-900 via-purple-800 to-purple-950',
+  21: 'bg-gradient-to-br from-green-900 via-green-800 to-green-950',
+  22: 'bg-gradient-to-br from-amber-900 via-amber-800 to-amber-950',
+  23: 'bg-gradient-to-br from-pink-900 via-pink-800 to-pink-950',
+  24: 'bg-gradient-to-br from-indigo-900 via-indigo-800 to-indigo-950',
+  25: 'bg-gradient-to-br from-teal-900 via-teal-800 to-teal-950',
+  26: 'bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950',
+  27: 'bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-950',
+  28: 'bg-gradient-to-br from-stone-900 via-stone-800 to-stone-950',
+  29: 'bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-950',
+};
 
 export default function App() {
   const [channel, setChannel] = useState(1);
@@ -58,8 +84,14 @@ export default function App() {
     if (changeTimeoutRef.current) window.clearTimeout(changeTimeoutRef.current);
 
     setChannel((prev) => {
-      if (direction === 'up') return prev === TOTAL_CHANNELS ? 1 : prev + 1;
-      return prev === 1 ? TOTAL_CHANNELS : prev - 1;
+      const currentIndex = AVAILABLE_CHANNELS.indexOf(prev);
+      if (direction === 'up') {
+        const nextIndex = (currentIndex + 1) % AVAILABLE_CHANNELS.length;
+        return AVAILABLE_CHANNELS[nextIndex];
+      } else {
+        const prevIndex = (currentIndex - 1 + AVAILABLE_CHANNELS.length) % AVAILABLE_CHANNELS.length;
+        return AVAILABLE_CHANNELS[prevIndex];
+      }
     });
 
     // Simulate a brief signal loss/black screen when switching digital channels
@@ -146,14 +178,25 @@ export default function App() {
             <div 
               className={`absolute inset-0 flex items-center justify-center transition-opacity duration-200 ${
                 isChanging ? 'opacity-0' : 'opacity-100'
-              } ${CHANNEL_STYLES[channel - 1]}`}
+              } ${STYLE_MAPPING[channel]}`}
             >
-              <h1 className="text-5xl md:text-8xl lg:text-9xl font-black text-white/90 tracking-tighter drop-shadow-2xl select-none">
-                Channel {channel}
-              </h1>
-              
-              {/* Subtle background decoration */}
-              <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white via-transparent to-transparent pointer-events-none"></div>
+              {YOUTUBE_MAPPING[channel] ? (
+                <iframe
+                  className="w-full h-full"
+                  src={`https://www.youtube.com/embed/${YOUTUBE_MAPPING[channel]}?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&playlist=${YOUTUBE_MAPPING[channel]}&loop=1`}
+                  title={NAME_MAPPING[channel]}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  style={{ border: 'none' }}
+                ></iframe>
+              ) : (
+                <div className="flex flex-col items-center">
+                  <h1 className="text-5xl md:text-8xl lg:text-9xl font-black text-white/90 tracking-tighter drop-shadow-2xl select-none">
+                    {NAME_MAPPING[channel]}
+                  </h1>
+                  <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white via-transparent to-transparent pointer-events-none"></div>
+                </div>
+              )}
             </div>
 
             {/* Static Noise Overlay (always slightly visible for realism, more visible during change) */}
@@ -173,7 +216,7 @@ export default function App() {
                   CH {channel.toString().padStart(2, '0')}
                 </span>
                 <span className="text-white/80 text-lg md:text-xl font-medium select-none mt-1">
-                  Channel {channel}
+                  {NAME_MAPPING[channel]}
                 </span>
               </div>
             </div>
