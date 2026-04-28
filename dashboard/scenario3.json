@@ -27,7 +27,7 @@
     ],
     "labels": ["16시", "17시", "18시", "19시", "20시", "21시", "22시", "23시"],
     "remoteClicks": [10, 5, 25, 42, 35, 0, 0, 0],
-    "volumeLevels": [15, 15, 18, 20, 18, 14, 14, 14],
+    "volumeLevels": [15, 15, 18, 20, 18, 14, 10, 7],
     "zappingAvg": "15분 00초", "zappingMax": "3회",
     "content": [20, 50, 20, 10], "emotionScore": 60,
     "keywords": [
