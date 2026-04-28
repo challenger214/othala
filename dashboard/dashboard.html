@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TV 라이프 케어 관제 대시보드</title>
-    <!-- Chart.js 로드 -->
+    <!-- Chart.js 및 DataLabels 플러그인 (호버 없이 글씨 표시용) -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
 
@@ -16,10 +17,12 @@
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Noto Sans KR', sans-serif; }
+        
+        /* 🚨 전체 화면을 꽉 채우도록 설정 */
         body { background-color: var(--bg-dark); color: var(--text-main); padding: 20px; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
-        /* Header 영역 */
-        .header { display: flex; justify-content: space-between; align-items: center; background-color: var(--panel-bg); padding: 15px 25px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        /* Header (고정 높이) */
+        .header { display: flex; justify-content: space-between; align-items: center; background-color: var(--panel-bg); padding: 15px 25px; border-radius: 12px; margin-bottom: 20px; flex-shrink: 0; }
         .user-info { display: flex; align-items: center; gap: 15px; }
         .avatar { width: 50px; height: 50px; background-color: #475569; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; }
         .status-badge { background-color: rgba(74, 222, 128, 0.2); color: var(--accent-green); padding: 5px 12px; border-radius: 20px; font-size: 14px; font-weight: bold; display: flex; align-items: center; gap: 5px; }
@@ -29,51 +32,62 @@
         .device-status { display: flex; gap: 20px; font-size: 15px; color: var(--text-muted); }
         .device-status span { color: var(--accent-blue); font-weight: bold; }
 
-        /* Main Grid 영역 */
-        .main-grid { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 20px; flex-grow: 1; margin-bottom: 20px; }
-        .panel { background-color: var(--panel-bg); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
-        .panel-title { font-size: 16px; font-weight: 500; color: var(--text-muted); margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
+        /* Main Grid (남은 세로 공간 모두 차지) */
+        .main-grid { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 20px; flex: 1; margin-bottom: 20px; min-height: 0; }
+        .panel { background-color: var(--panel-bg); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; min-height: 0; }
+        .panel-title { font-size: 16px; font-weight: 500; color: var(--text-muted); margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; flex-shrink: 0; }
 
-        /* 타임라인 UI */
-        .timeline-container { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
-        .timeline-visual-area { position: relative; margin-top: 60px; margin-bottom: 10px; } 
-        .timeline-markers { position: absolute; top: -60px; left: 0; width: 100%; height: calc(100% + 60px); pointer-events: none; }
-        .marker-group { position: absolute; display: flex; flex-direction: column; align-items: center; transform: translateX(-50%); height: 100%; z-index: 10; }
-        .marker-content { text-align: center; margin-bottom: 4px; background-color: var(--panel-bg); padding: 4px; border-radius: 6px; white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-        .marker-icon { font-size: 18px; line-height: 1; margin-bottom: 4px; }
-        .marker-time { color: var(--accent-blue); font-size: 13px; font-weight: bold; line-height: 1.2; }
+        /* 🚨 [수정 완벽 반영] 타임라인 영역 상하 꽉 채우기 */
+        .timeline-container { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+        .timeline-visual-area { position: relative; flex: 1; display: flex; flex-direction: column; padding-top: 60px; min-height: 0; } 
+        .timeline-markers { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; }
+        .marker-group { position: absolute; height: 100%; display: flex; flex-direction: column; align-items: center; transform: translateX(-50%); }
+        .marker-content { text-align: center; background-color: var(--panel-bg); padding: 4px 8px; border-radius: 6px; border: 1px solid var(--border-color); box-shadow: 0 4px 6px rgba(0,0,0,0.5); }
+        .marker-icon { font-size: 18px; margin-bottom: 2px; }
+        .marker-time { color: var(--accent-blue); font-size: 13px; font-weight: bold; }
         .marker-label { color: #fff; font-size: 12px; font-weight: 500; }
-        .marker-line { width: 2px; flex-grow: 1; background-color: rgba(56, 189, 248, 0.5); }
-        .timeline-track { width: 100%; height: 50px; background-color: #0f172a; border-radius: 8px; display: flex; overflow: hidden; position: relative; border: 1px solid var(--border-color); }
+        .marker-line { width: 2px; flex: 1; background-color: rgba(56, 189, 248, 0.5); margin-top: 4px; }
+        
+        .timeline-track { flex: 1; width: 100%; background-color: #0f172a; border-radius: 8px; display: flex; overflow: hidden; border: 1px solid var(--border-color); }
         .segment { height: 100%; transition: width 0.5s ease; }
         .seg-active { background-color: var(--accent-blue); }
         .seg-idle { background-color: var(--accent-yellow); }
         .seg-sleep { background-color: transparent; }
-        .timeline-labels { display: flex; justify-content: space-between; color: var(--text-muted); font-size: 12px; margin-top: 5px; padding: 0 5px; }
-        .timeline-legend { display: flex; justify-content: center; gap: 15px; margin-top: 15px; font-size: 12px; color: var(--text-muted); }
+        
+        .timeline-labels { display: flex; justify-content: space-between; color: var(--text-muted); font-size: 12px; margin-top: 10px; flex-shrink: 0; }
+        .timeline-legend { display: flex; justify-content: center; gap: 15px; margin-top: 15px; font-size: 12px; color: var(--text-muted); flex-shrink: 0; }
         .legend-item { display: flex; align-items: center; gap: 5px; }
         .legend-box { width: 12px; height: 12px; border-radius: 3px; }
 
-        /* Chart 및 기타 UI */
-        .chart-wrapper { position: relative; height: 150px; width: 100%; margin-bottom: 15px; }
-        .micro-stats { display: flex; justify-content: space-between; text-align: center; margin-top: 10px; }
-        .micro-stats div { background-color: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; width: 48%; }
-        .micro-stats div h4 { font-size: 12px; color: var(--text-muted); font-weight: normal; margin-bottom: 5px; }
-        .micro-stats div p { font-size: 20px; font-weight: bold; color: var(--accent-blue); }
-        .word-cloud { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px; padding: 10px; }
+        /* 🚨 [수정 완벽 반영] 마이크로 차트 영역 상하 꽉 채우기 */
+        .chart-wrapper { position: relative; flex: 1; width: 100%; min-height: 0; }
+        /* Chart.js 캔버스를 부모에 완벽히 맞추기 위한 필수 설정 */
+        .chart-wrapper canvas { position: absolute; top: 0; left: 0; width: 100% !important; height: 100% !important; }
         
-        /* Footer (인사이트) 영역 */
-        .footer { background-color: var(--panel-bg); border-radius: 12px; padding: 20px 25px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1); }
-        .footer-title { color: var(--accent-blue); font-weight: bold; font-size: 16px; display: flex; align-items: center; gap: 8px;}
-        .footer-text { 
-            font-size: 16px; 
-            color: var(--text-main); 
-            line-height: 1.6; 
-            background-color: rgba(255,255,255,0.03); 
-            padding: 15px 20px; 
-            border-radius: 8px; 
-            border-left: 4px solid var(--accent-blue);
-        }
+        .micro-stats { display: flex; justify-content: space-between; text-align: center; margin-top: 15px; flex-shrink: 0; }
+        .micro-stats div { background-color: rgba(255,255,255,0.03); padding: 12px; border-radius: 8px; width: 48%; border: 1px solid var(--border-color); }
+        .micro-stats div h4 { font-size: 12px; color: var(--text-muted); font-weight: normal; margin-bottom: 5px; }
+        .micro-stats div p { font-size: 22px; font-weight: bold; color: var(--accent-blue); }
+
+        /* 🚨 [수정 완벽 반영] 도넛 차트 크기 확대 및 텍스트 강제 표시 */
+        .doughnut-charts-container { display: flex; flex: 1; gap: 15px; min-height: 0; }
+        .chart-col { flex: 1; display: flex; flex-direction: column; position: relative; }
+        .chart-label-top { font-size: 13px; color: var(--text-muted); text-align: center; margin-bottom: 10px; flex-shrink: 0; }
+        .doughnut-wrapper { position: relative; flex: 1; width: 100%; min-height: 0; }
+        .doughnut-wrapper canvas { position: absolute; top: 0; left: 0; width: 100% !important; height: 100% !important; }
+        
+        /* 정서 지수 한가운데 텍스트 표시용 */
+        .emotion-score-center { position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%); font-size: 28px; font-weight: bold; color: var(--accent-yellow); pointer-events: none; }
+        .emotion-labels { display: flex; justify-content: space-between; width: 100%; padding: 0 10px; font-size: 12px; color: var(--text-muted); position: absolute; bottom: 0; }
+        .emotion-labels span:last-child { color: var(--accent-yellow); }
+
+        .word-cloud-title { font-size: 14px; font-weight: 500; color: var(--text-muted); margin-bottom: 10px; margin-top: 15px; border-top: 1px solid var(--border-color); padding-top: 15px; flex-shrink: 0; }
+        .word-cloud { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px; flex-shrink: 0; }
+        
+        /* Footer (고정 높이) */
+        .footer { background-color: var(--panel-bg); border-radius: 12px; padding: 15px 25px; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
+        .footer-title { color: var(--accent-blue); font-weight: bold; font-size: 16px; }
+        .footer-text { font-size: 15px; color: var(--text-main); line-height: 1.5; background-color: rgba(255,255,255,0.02); padding: 12px 15px; border-radius: 8px; border-left: 4px solid var(--accent-blue); }
     </style>
 </head>
 <body>
@@ -94,6 +108,7 @@
     </div>
 
     <div class="main-grid">
+        <!-- 1. 타임라인 패널 -->
         <div class="panel">
             <div class="panel-title">24H 생활 활동 타임라인</div>
             <div class="timeline-container">
@@ -105,49 +120,64 @@
                     <span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>24:00</span>
                 </div>
                 <div class="timeline-legend">
-                    <div class="legend-item"><div class="legend-box seg-active"></div> 능동 시청 (조작 O)</div>
-                    <div class="legend-item"><div class="legend-box seg-idle"></div> 수동 시청 (조작 X)</div>
-                    <div class="legend-item"><div class="legend-box" style="background:#0f172a; border:1px solid #334155;"></div> TV 꺼짐 (외출/수면)</div>
+                    <div class="legend-item"><div class="legend-box seg-active"></div> 능동 시청</div>
+                    <div class="legend-item"><div class="legend-box seg-idle"></div> 수동 시청</div>
+                    <div class="legend-item"><div class="legend-box" style="background:#0f172a; border:1px solid #334155;"></div> TV 꺼짐</div>
                 </div>
             </div>
         </div>
 
+        <!-- 2. 마이크로 행동 패널 -->
         <div class="panel">
             <div class="panel-title">마이크로 행동 패턴 (리모컨/볼륨)</div>
-            <div class="chart-wrapper"><canvas id="behaviorChart"></canvas></div>
+            <div class="chart-wrapper">
+                <canvas id="behaviorChart"></canvas>
+            </div>
             <div class="micro-stats">
                 <div><h4>평균 채널 체류 시간</h4><p id="stat-zap-avg">-</p></div>
                 <div><h4>분당 최대 채널 변경</h4><p id="stat-zap-max">-</p></div>
             </div>
         </div>
 
+        <!-- 3. 정서 및 콘텐츠 패널 -->
         <div class="panel">
             <div class="panel-title">정서 및 콘텐츠 선호도</div>
-            <div style="display:flex; height: 130px; margin-bottom: 10px;">
-                <div style="width: 50%; display: flex; flex-direction: column; align-items: center;">
-                    <span style="font-size:12px; color:var(--text-muted);">주간 선호 장르</span>
-                    <canvas id="contentChart" style="max-height:100px; margin-top:5px;"></canvas>
+            <div class="doughnut-charts-container">
+                <!-- 장르 차트 -->
+                <div class="chart-col">
+                    <div class="chart-label-top">주간 선호 장르</div>
+                    <div class="doughnut-wrapper">
+                        <canvas id="contentChart"></canvas>
+                    </div>
                 </div>
-                <div style="width: 50%; display: flex; flex-direction: column; align-items: center;">
-                    <span style="font-size:12px; color:var(--text-muted);">AI 정서 지수</span>
-                    <canvas id="emotionChart" style="max-height:100px; margin-top:5px;"></canvas>
+                <!-- 감정 차트 -->
+                <div class="chart-col">
+                    <div class="chart-label-top">AI 정서 지수</div>
+                    <div class="doughnut-wrapper">
+                        <canvas id="emotionChart"></canvas>
+                        <!-- 가운데 텍스트 강제 삽입 -->
+                        <div class="emotion-score-center" id="emotion-score-text">-</div>
+                        <div class="emotion-labels"><span>부정적</span><span>긍정적</span></div>
+                    </div>
                 </div>
             </div>
-            <div class="panel-title" style="border:none; padding:0; margin:0; font-size:14px;">최근 발화 키워드</div>
+            <div class="word-cloud-title">최근 주요 발화 키워드</div>
             <div class="word-cloud" id="word-cloud"></div>
         </div>
     </div>
 
     <div class="footer">
         <div class="footer-title">🤖 AI 종합 인사이트 및 케어 예측</div>
-        <div class="footer-text" id="ai-insights">데이터를 분석 중입니다...</div>
+        <div class="footer-text" id="ai-insights">데이터 분석 중...</div>
     </div>
 
     <script>
+        // ChartDataLabels 플러그인 활성화
+        Chart.register(ChartDataLabels);
+
         Chart.defaults.color = '#94a3b8';
         Chart.defaults.font.family = "'Noto Sans KR', sans-serif";
 
-        // 차트 인스턴스 전역 변수 (차트 중복 생성 방지용)
         let behaviorChartInstance = null;
         let contentChartInstance = null;
         let emotionChartInstance = null;
@@ -155,26 +185,22 @@
         async function loadData(url = 'data.json') {
             try {
                 const response = await fetch(url); 
-                if (!response.ok) throw new Error('데이터를 불러올 수 없습니다.');
+                if (!response.ok) throw new Error('데이터 로드 실패');
                 const mockData = await response.json();
                 renderDashboard(mockData);
             } catch (error) {
-                console.error('Error fetching data:', error);
-                document.getElementById('ai-insights').innerHTML = `<span style="color:#f87171;">🚨 데이터를 불러오는 데 실패했습니다. 로컬 서버 환경에서 실행 중인지 확인해주세요.</span>`;
+                console.error(error);
+                document.getElementById('ai-insights').innerHTML = `<span style="color:#f87171;">🚨 데이터를 불러오는 데 실패했습니다.</span>`;
             }
         }
 
         function renderDashboard(data) {
-            // 헤더 정보 바인딩
             document.getElementById('profile-name').innerText = `${data.profile.name} 어르신 (${data.profile.age}세, ${data.profile.gender})`;
             
-            // 배지 색상 초기화 및 세팅
             const statusEl = document.getElementById('profile-status');
             statusEl.innerText = data.profile.status;
-            statusEl.classList.remove('warning'); // 기존 경고 색상 무조건 제거
-            if (data.profile.status !== '정상') {
-                statusEl.classList.add('warning'); // 정상이 아닐때만 경고 색상 추가
-            }
+            statusEl.classList.remove('warning');
+            if (data.profile.status !== '정상') statusEl.classList.add('warning');
             
             document.getElementById('dev-tv').innerText = data.device.tv;
             document.getElementById('dev-vol').innerText = data.device.volume;
@@ -183,18 +209,15 @@
             document.getElementById('dev-temp').innerText = data.device.temp;
             document.getElementById('stat-zap-avg').innerText = data.zappingAvg;
             document.getElementById('stat-zap-max').innerText = data.zappingMax;
-            
-            // 인사이트 텍스트 바인딩
             document.getElementById('ai-insights').innerHTML = data.insights;
 
-            // 마커(이벤트) 렌더링
+            // 마커 렌더링
             const markersContainer = document.getElementById('timeline-markers');
             markersContainer.innerHTML = '';
             if(data.events) {
                 data.events.forEach(ev => {
                     const [hours, minutes] = ev.time.split(':').map(Number);
-                    const totalMins = (hours * 60) + minutes;
-                    const pct = (totalMins / 1440) * 100;
+                    const pct = (((hours * 60) + minutes) / 1440) * 100;
 
                     const markerGroup = document.createElement('div');
                     markerGroup.className = 'marker-group';
@@ -215,16 +238,15 @@
             // 타임라인 트랙 렌더링
             const track = document.getElementById('timeline-track');
             track.innerHTML = ''; 
-            const totalMinutes = 1440;
             data.timeline.forEach(seg => {
-                const widthPct = (seg.durationMinutes / totalMinutes) * 100;
+                const widthPct = (seg.durationMinutes / 1440) * 100;
                 const div = document.createElement('div');
                 div.className = `segment seg-${seg.state}`;
                 div.style.width = `${widthPct}%`;
                 track.appendChild(div);
             });
 
-            // 워드 클라우드 렌더링
+            // 워드 클라우드
             const wcContainer = document.getElementById('word-cloud');
             wcContainer.innerHTML = ''; 
             data.keywords.forEach(kw => {
@@ -236,12 +258,11 @@
                 wcContainer.appendChild(span);
             });
 
-            // 기존 차트가 있다면 파괴(destroy)하여 겹침 방지
             if (behaviorChartInstance) behaviorChartInstance.destroy();
             if (contentChartInstance) contentChartInstance.destroy();
             if (emotionChartInstance) emotionChartInstance.destroy();
 
-            // 1. 행동 패턴 차트 다시 그리기
+            // 1. 행동 패턴 차트 (꽉 채움)
             behaviorChartInstance = new Chart(document.getElementById('behaviorChart').getContext('2d'), {
                 type: 'bar',
                 data: {
@@ -251,28 +272,53 @@
                         { label: '클릭수', data: data.remoteClicks, backgroundColor: '#38bdf8', borderRadius: 4, yAxisID: 'y1' }
                     ]
                 },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { color: '#334155' } }, y: { display: false }, y1: { display: false } } }
+                options: { 
+                    responsive: true, maintainAspectRatio: false, 
+                    plugins: { legend: { display: false }, datalabels: { display: false } }, // 라벨 숨김
+                    scales: { x: { grid: { color: '#334155' } }, y: { display: false }, y1: { display: false } } 
+                }
             });
 
-            // 2. 콘텐츠 선호도 차트 다시 그리기
+            // 2. 장르 선호도 차트 (데이터 라벨 플러그인 적용 -> 호버 없이 텍스트 보임)
+            const contentLabels = ['트로트', '뉴스', '건강', '기타'];
             contentChartInstance = new Chart(document.getElementById('contentChart').getContext('2d'), {
                 type: 'doughnut',
-                data: { labels: ['트로트', '뉴스', '건강', '기타'], datasets: [{ data: data.content, backgroundColor: ['#38bdf8', '#4ade80', '#facc15', '#94a3b8'], borderWidth: 0 }] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, cutout: '70%' }
+                data: { 
+                    labels: contentLabels, 
+                    datasets: [{ data: data.content, backgroundColor: ['#38bdf8', '#4ade80', '#facc15', '#64748b'], borderWidth: 0 }] 
+                },
+                options: { 
+                    responsive: true, maintainAspectRatio: false, cutout: '50%',
+                    plugins: { 
+                        legend: { display: false },
+                        tooltip: { enabled: false }, // 기본 툴팁 끄기
+                        datalabels: { // 차트 영역 내에 텍스트 강제 표시
+                            color: '#fff',
+                            font: { weight: 'bold', size: 12 },
+                            formatter: (value, ctx) => {
+                                // 10% 이상인 경우에만 텍스트 표시 (차트가 너무 작아 글씨가 겹치는 것 방지)
+                                if(value < 10) return '';
+                                return contentLabels[ctx.dataIndex] + '\n' + value + '%';
+                            },
+                            textAlign: 'center'
+                        }
+                    } 
+                }
             });
 
-            // 3. 감정 상태 차트 다시 그리기
+            // 3. 감정 상태 차트 (크기 확보 및 중앙 텍스트 업데이트)
+            document.getElementById('emotion-score-text').innerText = data.emotionScore + '점';
             emotionChartInstance = new Chart(document.getElementById('emotionChart').getContext('2d'), {
                 type: 'doughnut',
-                data: { labels: ['현재 감정', ''], datasets: [{ data: [data.emotionScore, 100 - data.emotionScore], backgroundColor: ['#facc15', '#334155'], borderWidth: 0 }] },
-                options: { responsive: true, maintainAspectRatio: false, rotation: -90, circumference: 180, cutout: '75%', plugins: { legend: { display: false }, tooltip: { enabled: false } } }
+                data: { labels: ['긍정 지수', ''], datasets: [{ data: [data.emotionScore, 100 - data.emotionScore], backgroundColor: ['#facc15', '#334155'], borderWidth: 0 }] },
+                options: { 
+                    responsive: true, maintainAspectRatio: false, rotation: -90, circumference: 180, cutout: '75%', 
+                    plugins: { legend: { display: false }, tooltip: { enabled: false }, datalabels: { display: false } } 
+                }
             });
         }
 
-        // 페이지가 처음 열릴 때 기본 데이터(data.json) 로드
         document.addEventListener('DOMContentLoaded', () => loadData('data.json'));
-
-        // 🚀 단축키 이벤트 리스너: 숫자 0, 1, 2, 3 누를 때마다 화면 변경
         document.addEventListener('keydown', (event) => {
             if (event.key === '0') loadData('data.json');
             if (event.key === '1') loadData('scenario1.json');
