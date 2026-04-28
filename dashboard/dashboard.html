@@ -10,14 +10,8 @@
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
 
         :root {
-            --bg-dark: #0f172a;
-            --panel-bg: #1e293b;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --accent-blue: #38bdf8;
-            --accent-green: #4ade80;
-            --accent-yellow: #facc15;
-            --accent-red: #f87171;
+            --bg-dark: #0f172a; --panel-bg: #1e293b; --text-main: #f8fafc; --text-muted: #94a3b8;
+            --accent-blue: #38bdf8; --accent-green: #4ade80; --accent-yellow: #facc15; --accent-red: #f87171;
             --border-color: #334155;
         }
 
@@ -42,12 +36,24 @@
 
         /* 타임라인 커스텀 UI */
         .timeline-container { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
-        .timeline-labels { display: flex; justify-content: space-between; color: var(--text-muted); font-size: 12px; margin-bottom: 5px; }
+        
+        /* 🚨 추가된 마커(기상/귀가) CSS */
+        .timeline-visual-area { position: relative; margin-top: 35px; margin-bottom: 5px; }
+        .timeline-markers { position: absolute; top: -45px; left: 0; width: 100%; height: calc(100% + 45px); pointer-events: none; }
+        .marker-group { position: absolute; display: flex; flex-direction: column; align-items: center; transform: translateX(-50%); height: 100%; z-index: 10; }
+        .marker-content { text-align: center; margin-bottom: 2px; }
+        .marker-icon { font-size: 16px; line-height: 1; margin-bottom: 4px; }
+        .marker-time { color: var(--accent-blue); font-size: 12px; font-weight: bold; line-height: 1.2; }
+        .marker-label { color: var(--text-muted); font-size: 11px; }
+        .marker-line { width: 1px; flex-grow: 1; background-color: var(--accent-blue); opacity: 0.8; }
+
         .timeline-track { width: 100%; height: 60px; background-color: #0f172a; border-radius: 8px; display: flex; overflow: hidden; position: relative; }
         .segment { height: 100%; transition: width 0.5s ease; }
         .seg-active { background-color: var(--accent-blue); }
         .seg-idle { background-color: var(--accent-yellow); }
         .seg-sleep { background-color: transparent; }
+        
+        .timeline-labels { display: flex; justify-content: space-between; color: var(--text-muted); font-size: 12px; margin-top: 5px; }
         .timeline-legend { display: flex; justify-content: center; gap: 15px; margin-top: 15px; font-size: 12px; color: var(--text-muted); }
         .legend-item { display: flex; align-items: center; gap: 5px; }
         .legend-box { width: 12px; height: 12px; border-radius: 3px; }
@@ -87,10 +93,14 @@
         <div class="panel">
             <div class="panel-title">24H 생활 활동 타임라인</div>
             <div class="timeline-container">
+                <!-- 🚨 마커와 트랙을 감싸는 영역 -->
+                <div class="timeline-visual-area">
+                    <div class="timeline-markers" id="timeline-markers"></div>
+                    <div class="timeline-track" id="timeline-track"></div>
+                </div>
                 <div class="timeline-labels">
                     <span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>24:00</span>
                 </div>
-                <div class="timeline-track" id="timeline-track"></div>
                 <div class="timeline-legend">
                     <div class="legend-item"><div class="legend-box seg-active"></div> 능동 시청 (조작 O)</div>
                     <div class="legend-item"><div class="legend-box seg-idle"></div> 수동 시청 (조작 X)</div>
@@ -133,33 +143,26 @@
 
     <!-- 데이터 포팅 및 렌더링 스크립트 -->
     <script>
-        // Chart.js 공통 설정 (다크테마)
         Chart.defaults.color = '#94a3b8';
         Chart.defaults.font.family = "'Noto Sans KR', sans-serif";
 
-        // JSON 데이터 비동기 호출
         async function loadData() {
             try {
-                // 외부 json 파일 호출 (포팅)
                 const response = await fetch('data.json'); 
                 if (!response.ok) throw new Error('데이터를 불러올 수 없습니다.');
                 const mockData = await response.json();
-                
                 renderDashboard(mockData);
             } catch (error) {
                 console.error('Error fetching data:', error);
-                document.getElementById('ai-insights').innerHTML = `<span style="color:#f87171;">🚨 데이터를 불러오는 데 실패했습니다. 로컬 서버 환경(Live Server 등)에서 실행 중인지 확인해주세요.</span>`;
+                document.getElementById('ai-insights').innerHTML = `<span style="color:#f87171;">🚨 데이터를 불러오는 데 실패했습니다. 로컬 서버 환경에서 실행 중인지 확인해주세요.</span>`;
             }
         }
 
-        // 받아온 데이터로 화면 그리기 함수
         function renderDashboard(data) {
-            // 1. 텍스트 데이터 바인딩
+            // 텍스트 데이터 바인딩
             document.getElementById('profile-name').innerText = `${data.profile.name} 어르신 (${data.profile.age}세, ${data.profile.gender})`;
-            
             const statusEl = document.getElementById('profile-status');
             statusEl.innerText = data.profile.status;
-            // '경고'나 '주의' 상태면 빨간색 스타일 적용
             if (data.profile.status !== '정상') statusEl.classList.add('warning');
             
             document.getElementById('dev-tv').innerText = data.device.tv;
@@ -171,9 +174,35 @@
             document.getElementById('stat-zap-max').innerText = data.zappingMax;
             document.getElementById('ai-insights').innerHTML = data.insights;
 
-            // 2. 타임라인 렌더링
+            // 🚨 타임라인 상단 마커(기상, 귀가 등) 렌더링
+            const markersContainer = document.getElementById('timeline-markers');
+            markersContainer.innerHTML = '';
+            if(data.events) {
+                data.events.forEach(ev => {
+                    // "HH:MM" 텍스트를 파싱하여 하루 1440분 기준 퍼센테이지(%)로 변환
+                    const [hours, minutes] = ev.time.split(':').map(Number);
+                    const totalMins = (hours * 60) + minutes;
+                    const pct = (totalMins / 1440) * 100;
+
+                    const markerGroup = document.createElement('div');
+                    markerGroup.className = 'marker-group';
+                    markerGroup.style.left = `${pct}%`;
+
+                    markerGroup.innerHTML = `
+                        <div class="marker-content">
+                            <div class="marker-icon">${ev.icon}</div>
+                            <div class="marker-time">${ev.time}</div>
+                            <div class="marker-label">${ev.label}</div>
+                        </div>
+                        <div class="marker-line"></div>
+                    `;
+                    markersContainer.appendChild(markerGroup);
+                });
+            }
+
+            // 타임라인 트랙 렌더링
             const track = document.getElementById('timeline-track');
-            track.innerHTML = ''; // 초기화
+            track.innerHTML = ''; 
             const totalMinutes = 1440;
             data.timeline.forEach(seg => {
                 const widthPct = (seg.durationMinutes / totalMinutes) * 100;
@@ -183,9 +212,9 @@
                 track.appendChild(div);
             });
 
-            // 3. 워드 클라우드 렌더링
+            // 워드 클라우드 렌더링
             const wcContainer = document.getElementById('word-cloud');
-            wcContainer.innerHTML = ''; // 초기화
+            wcContainer.innerHTML = ''; 
             data.keywords.forEach(kw => {
                 const span = document.createElement('span');
                 span.innerText = kw.word;
@@ -195,7 +224,7 @@
                 wcContainer.appendChild(span);
             });
 
-            // 4. 행동 패턴 차트
+            // 행동 패턴 차트
             new Chart(document.getElementById('behaviorChart').getContext('2d'), {
                 type: 'bar',
                 data: {
@@ -208,14 +237,14 @@
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { color: '#334155' } }, y: { display: false }, y1: { display: false } } }
             });
 
-            // 5. 콘텐츠 파이 차트
+            // 콘텐츠 파이 차트
             new Chart(document.getElementById('contentChart').getContext('2d'), {
                 type: 'doughnut',
                 data: { labels: ['트로트', '뉴스', '건강', '기타'], datasets: [{ data: data.content, backgroundColor: ['#38bdf8', '#4ade80', '#facc15', '#94a3b8'], borderWidth: 0 }] },
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, cutout: '70%' }
             });
 
-            // 6. 감정 상태 차트
+            // 감정 상태 차트
             new Chart(document.getElementById('emotionChart').getContext('2d'), {
                 type: 'doughnut',
                 data: { labels: ['현재 감정', ''], datasets: [{ data: [data.emotionScore, 100 - data.emotionScore], backgroundColor: ['#facc15', '#334155'], borderWidth: 0 }] },
@@ -223,7 +252,6 @@
             });
         }
 
-        // 페이지 로드 시 데이터 호출 시작
         document.addEventListener('DOMContentLoaded', loadData);
     </script>
 </body>

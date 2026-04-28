@@ -1,41 +1,43 @@
 {
     "profile": {
-      "name": "김수현",
-      "age": 78,
-      "gender": "여",
-      "location": "서울시 마포구 성산동",
-      "status": "정상",
-      "statusMessage": "규칙적인 일상 유지 중"
+      "name": "김수현", "age": 78, "gender": "여", "location": "서울시 마포구 성산동",
+      "status": "정상", "statusMessage": "규칙적인 일상 유지 중"
     },
     "device": {
-      "tv": "ON",
-      "tvTime": "2시간 15분",
-      "volume": 18,
-      "channel": "CH 19 TV조선",
-      "light": "ON",
-      "temp": 23
+      "tv": "ON", "tvTime": "3시간 45분", "volume": 18, "channel": "CH 19 TV조선",
+      "light": "ON", "temp": 23
     },
+    "events": [
+      { "time": "05:30", "label": "기상", "icon": "🔆" },
+      { "time": "15:00", "label": "귀가", "icon": "🏠" }
+    ],
     "timeline": [
-      { "durationMinutes": 390, "state": "sleep" },
-      { "durationMinutes": 300, "state": "active" },
-      { "durationMinutes": 60, "state": "idle" },
-      { "durationMinutes": 150, "state": "sleep" },
+      { "durationMinutes": 330, "state": "sleep" }, 
+      { "durationMinutes": 180, "state": "active" },
+      { "durationMinutes": 90, "state": "idle" },   
+      { "durationMinutes": 120, "state": "active" },
+      { "durationMinutes": 150, "state": "sleep" }, 
+      { "durationMinutes": 150, "state": "active" },
+      { "durationMinutes": 90, "state": "idle" },   
       { "durationMinutes": 240, "state": "active" },
-      { "durationMinutes": 300, "state": "sleep" }
+      { "durationMinutes": 90, "state": "sleep" }   
     ],
-    "labels": ["06", "08", "10", "12", "14", "16", "18", "20"],
-    "remoteClicks": [5, 45, 25, 10, 0, 30, 55, 20],
-    "volumeLevels": [10, 22, 20, 15, 0, 16, 18, 14],
-    "zappingAvg": "4분 30초",
-    "zappingMax": "12회",
-    "content": [45, 30, 15, 10],
-    "emotionScore": 75,
+    "labels": ["06시", "07시", "08시", "09시", "10시", "11시", "12시", "13시", "14시", "15시", "16시", "17시", "18시", "19시", "20시", "21시"],
+    "remoteClicks": [2, 15, 45, 20, 12, 35, 0, 0, 5, 25, 42, 10, 15, 55, 62, 18],
+    "volumeLevels": [8, 12, 22, 20, 18, 18, null, null, 12, 15, 16, 14, 18, 20, 18, 12],
+    "zappingAvg": "4분 30초", "zappingMax": "12회",
+    "content": [45, 30, 15, 10], "emotionScore": 75,
     "keywords": [
-      { "word": "미스터트롯", "size": 24, "color": "#38bdf8" },
-      { "word": "날씨", "size": 20, "color": "#4ade80" },
+      { "word": "미스터트롯", "size": 26, "color": "#38bdf8" },
+      { "word": "날씨", "size": 22, "color": "#4ade80" },
       { "word": "재밌네", "size": 28, "color": "#facc15" },
-      { "word": "전화", "size": 14, "color": "#94a3b8" },
-      { "word": "허리", "size": 16, "color": "#f87171" }
+      { "word": "임영웅", "size": 20, "color": "#38bdf8" },
+      { "word": "허리 아파", "size": 16, "color": "#f87171" },
+      { "word": "전화", "size": 15, "color": "#94a3b8" },
+      { "word": "아침마당", "size": 18, "color": "#4ade80" },
+      { "word": "뉴스", "size": 24, "color": "#facc15" },
+      { "word": "병원", "size": 17, "color": "#f87171" }
     ],
-    "insights": "평소보다 30분 일찍 기상하셨으며, 오전 활동량이 어제 대비 15% 증가했습니다. 전반적으로 매우 규칙적이고 건강한 생활 리듬을 유지하고 계십니다.<br><span style='color:#94a3b8'>🛌 예상 취침: 22:30 ~ 23:00</span>"
+    "insights": "오전 5시 30분에 기상하셨으며, 어제 대비 채널 탐색 속도가 일정하게 유지되고 있습니다. 주로 활기찬 음악 프로그램과 뉴스를 시청하시며 긍정적인 발화가 다수 감지되었습니다. <br><br><span style='color:#94a3b8'>💡 특이사항: 오후 시간대 '허리, 병원' 키워드가 감지되어 이번 주 건강 확인 안부 전화가 권장됩니다.</span>"
   }
+  
