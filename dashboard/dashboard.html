@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TV 라이프 케어 관제 대시보드</title>
-    <!-- Chart.js 로드 -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
@@ -32,47 +31,57 @@
         /* Main Grid 영역 */
         .main-grid { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 20px; flex-grow: 1; margin-bottom: 20px; }
         .panel { background-color: var(--panel-bg); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
-        .panel-title { font-size: 16px; font-weight: 500; color: var(--text-muted); margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
+        .panel-title { font-size: 16px; font-weight: 500; color: var(--text-muted); margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
 
-        /* 타임라인 커스텀 UI */
+        /* 🚨 개선된 타임라인 커스텀 UI */
         .timeline-container { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
         
-        /* 🚨 추가된 마커(기상/귀가) CSS */
-        .timeline-visual-area { position: relative; margin-top: 35px; margin-bottom: 5px; }
-        .timeline-markers { position: absolute; top: -45px; left: 0; width: 100%; height: calc(100% + 45px); pointer-events: none; }
+        .timeline-visual-area { position: relative; margin-top: 60px; margin-bottom: 10px; } /* 상단 여백 대폭 확대 */
+        .timeline-markers { position: absolute; top: -60px; left: 0; width: 100%; height: calc(100% + 60px); pointer-events: none; }
         .marker-group { position: absolute; display: flex; flex-direction: column; align-items: center; transform: translateX(-50%); height: 100%; z-index: 10; }
-        .marker-content { text-align: center; margin-bottom: 2px; }
-        .marker-icon { font-size: 16px; line-height: 1; margin-bottom: 4px; }
-        .marker-time { color: var(--accent-blue); font-size: 12px; font-weight: bold; line-height: 1.2; }
-        .marker-label { color: var(--text-muted); font-size: 11px; }
-        .marker-line { width: 1px; flex-grow: 1; background-color: var(--accent-blue); opacity: 0.8; }
+        
+        .marker-content { text-align: center; margin-bottom: 4px; background-color: var(--panel-bg); padding: 4px; border-radius: 6px; white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.2); } /* 마커 배경 추가 및 겹침 방지 */
+        .marker-icon { font-size: 18px; line-height: 1; margin-bottom: 4px; }
+        .marker-time { color: var(--accent-blue); font-size: 13px; font-weight: bold; line-height: 1.2; }
+        .marker-label { color: #fff; font-size: 12px; font-weight: 500; }
+        
+        .marker-line { width: 2px; flex-grow: 1; background-color: rgba(56, 189, 248, 0.5); /* 선을 조금 더 두껍고 부드럽게 */ }
 
-        .timeline-track { width: 100%; height: 60px; background-color: #0f172a; border-radius: 8px; display: flex; overflow: hidden; position: relative; }
+        .timeline-track { width: 100%; height: 50px; background-color: #0f172a; border-radius: 8px; display: flex; overflow: hidden; position: relative; border: 1px solid var(--border-color); }
         .segment { height: 100%; transition: width 0.5s ease; }
         .seg-active { background-color: var(--accent-blue); }
         .seg-idle { background-color: var(--accent-yellow); }
         .seg-sleep { background-color: transparent; }
         
-        .timeline-labels { display: flex; justify-content: space-between; color: var(--text-muted); font-size: 12px; margin-top: 5px; }
+        .timeline-labels { display: flex; justify-content: space-between; color: var(--text-muted); font-size: 12px; margin-top: 5px; padding: 0 5px; }
         .timeline-legend { display: flex; justify-content: center; gap: 15px; margin-top: 15px; font-size: 12px; color: var(--text-muted); }
         .legend-item { display: flex; align-items: center; gap: 5px; }
         .legend-box { width: 12px; height: 12px; border-radius: 3px; }
 
         /* Chart 및 기타 UI */
-        .chart-wrapper { position: relative; height: 160px; width: 100%; margin-bottom: 15px; }
+        .chart-wrapper { position: relative; height: 150px; width: 100%; margin-bottom: 15px; }
         .micro-stats { display: flex; justify-content: space-between; text-align: center; margin-top: 10px; }
         .micro-stats div { background-color: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; width: 48%; }
         .micro-stats div h4 { font-size: 12px; color: var(--text-muted); font-weight: normal; margin-bottom: 5px; }
         .micro-stats div p { font-size: 20px; font-weight: bold; color: var(--accent-blue); }
         .word-cloud { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px; padding: 10px; }
-        .footer { background-color: var(--panel-bg); border-radius: 12px; padding: 15px 25px; display: flex; flex-direction: column; gap: 5px; }
-        .footer-title { color: var(--accent-blue); font-weight: bold; font-size: 14px; margin-bottom: 5px; }
-        .footer-text { font-size: 14px; color: var(--text-main); line-height: 1.5; }
+        
+        /* 🚨 개선된 Footer (인사이트) 영역 */
+        .footer { background-color: var(--panel-bg); border-radius: 12px; padding: 20px 25px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1); }
+        .footer-title { color: var(--accent-blue); font-weight: bold; font-size: 16px; display: flex; align-items: center; gap: 8px;}
+        .footer-text { 
+            font-size: 16px; /* 폰트 사이즈 확대 */
+            color: var(--text-main); 
+            line-height: 1.6; 
+            background-color: rgba(255,255,255,0.03); /* 카드형 배경 추가 */
+            padding: 15px 20px; 
+            border-radius: 8px; 
+            border-left: 4px solid var(--accent-blue); /* 좌측 강조 라인 */
+        }
     </style>
 </head>
 <body>
 
-    <!-- Header -->
     <div class="header">
         <div class="user-info">
             <div class="avatar">👵</div>
@@ -88,12 +97,10 @@
         </div>
     </div>
 
-    <!-- Main Content -->
     <div class="main-grid">
         <div class="panel">
             <div class="panel-title">24H 생활 활동 타임라인</div>
             <div class="timeline-container">
-                <!-- 🚨 마커와 트랙을 감싸는 영역 -->
                 <div class="timeline-visual-area">
                     <div class="timeline-markers" id="timeline-markers"></div>
                     <div class="timeline-track" id="timeline-track"></div>
@@ -120,14 +127,14 @@
 
         <div class="panel">
             <div class="panel-title">정서 및 콘텐츠 선호도</div>
-            <div style="display:flex; height: 140px; margin-bottom: 20px;">
+            <div style="display:flex; height: 130px; margin-bottom: 10px;">
                 <div style="width: 50%; display: flex; flex-direction: column; align-items: center;">
                     <span style="font-size:12px; color:var(--text-muted);">주간 선호 장르</span>
-                    <canvas id="contentChart" style="max-height:100px; margin-top:10px;"></canvas>
+                    <canvas id="contentChart" style="max-height:100px; margin-top:5px;"></canvas>
                 </div>
                 <div style="width: 50%; display: flex; flex-direction: column; align-items: center;">
                     <span style="font-size:12px; color:var(--text-muted);">AI 정서 지수</span>
-                    <canvas id="emotionChart" style="max-height:100px; margin-top:10px;"></canvas>
+                    <canvas id="emotionChart" style="max-height:100px; margin-top:5px;"></canvas>
                 </div>
             </div>
             <div class="panel-title" style="border:none; padding:0; margin:0; font-size:14px;">최근 발화 키워드</div>
@@ -135,13 +142,12 @@
         </div>
     </div>
 
-    <!-- Footer -->
+    <!-- 개선된 푸터(인사이트) HTML 구조 -->
     <div class="footer">
         <div class="footer-title">🤖 AI 종합 인사이트 및 케어 예측</div>
         <div class="footer-text" id="ai-insights">데이터를 분석 중입니다...</div>
     </div>
 
-    <!-- 데이터 포팅 및 렌더링 스크립트 -->
     <script>
         Chart.defaults.color = '#94a3b8';
         Chart.defaults.font.family = "'Noto Sans KR', sans-serif";
@@ -159,7 +165,6 @@
         }
 
         function renderDashboard(data) {
-            // 텍스트 데이터 바인딩
             document.getElementById('profile-name').innerText = `${data.profile.name} 어르신 (${data.profile.age}세, ${data.profile.gender})`;
             const statusEl = document.getElementById('profile-status');
             statusEl.innerText = data.profile.status;
@@ -172,14 +177,15 @@
             document.getElementById('dev-temp').innerText = data.device.temp;
             document.getElementById('stat-zap-avg').innerText = data.zappingAvg;
             document.getElementById('stat-zap-max').innerText = data.zappingMax;
+            
+            // 인사이트 바인딩
             document.getElementById('ai-insights').innerHTML = data.insights;
 
-            // 🚨 타임라인 상단 마커(기상, 귀가 등) 렌더링
+            // 마커 렌더링
             const markersContainer = document.getElementById('timeline-markers');
             markersContainer.innerHTML = '';
             if(data.events) {
                 data.events.forEach(ev => {
-                    // "HH:MM" 텍스트를 파싱하여 하루 1440분 기준 퍼센테이지(%)로 변환
                     const [hours, minutes] = ev.time.split(':').map(Number);
                     const totalMins = (hours * 60) + minutes;
                     const pct = (totalMins / 1440) * 100;
@@ -200,7 +206,7 @@
                 });
             }
 
-            // 타임라인 트랙 렌더링
+            // 트랙 렌더링
             const track = document.getElementById('timeline-track');
             track.innerHTML = ''; 
             const totalMinutes = 1440;
@@ -224,7 +230,7 @@
                 wcContainer.appendChild(span);
             });
 
-            // 행동 패턴 차트
+            // 차트들 렌더링
             new Chart(document.getElementById('behaviorChart').getContext('2d'), {
                 type: 'bar',
                 data: {
@@ -237,14 +243,12 @@
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { color: '#334155' } }, y: { display: false }, y1: { display: false } } }
             });
 
-            // 콘텐츠 파이 차트
             new Chart(document.getElementById('contentChart').getContext('2d'), {
                 type: 'doughnut',
                 data: { labels: ['트로트', '뉴스', '건강', '기타'], datasets: [{ data: data.content, backgroundColor: ['#38bdf8', '#4ade80', '#facc15', '#94a3b8'], borderWidth: 0 }] },
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, cutout: '70%' }
             });
 
-            // 감정 상태 차트
             new Chart(document.getElementById('emotionChart').getContext('2d'), {
                 type: 'doughnut',
                 data: { labels: ['현재 감정', ''], datasets: [{ data: [data.emotionScore, 100 - data.emotionScore], backgroundColor: ['#facc15', '#334155'], borderWidth: 0 }] },
