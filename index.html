@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>안전 케어 모바일 데모</title>
+    <style>
+        /* 기본 배경 설정 */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #e0e5ec;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', sans-serif;
+            overflow: hidden;
+        }
+
+        /* 스마트폰 외형 프레임 */
+        .smartphone {
+            position: relative;
+            width: 320px;
+            height: 650px;
+            background-color: #000;
+            border-radius: 40px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            border: 8px solid #333;
+            overflow: hidden;
+        }
+
+        /* 스마트폰 노치 (카메라 부분) */
+        .notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 25px;
+            background-color: #333;
+            border-bottom-left-radius: 15px;
+            border-bottom-right-radius: 15px;
+            z-index: 10;
+        }
+
+        /* 스마트폰 잠금화면 (배경) */
+        .screen {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* 잠금화면 시계 */
+        .clock {
+            margin-top: 80px;
+            color: white;
+            text-align: center;
+        }
+        .time { font-size: 50px; font-weight: bold; margin: 0; }
+        .date { font-size: 16px; margin-top: 5px; opacity: 0.9; }
+
+        /* 🚨 긴급 푸시 알림 UI */
+        .push-notification {
+            position: absolute;
+            top: 35px; /* 노치 아래 */
+            left: 10px;
+            right: 10px;
+            background-color: rgba(255, 59, 48, 0.95); /* 긴급한 붉은색 */
+            color: white;
+            padding: 15px;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(255, 59, 48, 0.4);
+            transform: translateY(-150%); /* 기본적으로 화면 밖에 숨김 */
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 20;
+            backdrop-filter: blur(10px);
+        }
+
+        /* 알림이 활성화되었을 때 (내려옴) */
+        .push-notification.active {
+            transform: translateY(0);
+        }
+
+        .push-header {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .push-header span { margin-right: 5px; }
+        .push-body {
+            font-size: 13px;
+            line-height: 1.4;
+            opacity: 0.95;
+        }
+
+        /* 📱 진동(Shake) 애니메이션 */
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            70% { transform: translate(3px, 1px) rotate(-1deg); }
+            80% { transform: translate(-1px, -1px) rotate(1deg); }
+            90% { transform: translate(1px, 2px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
+
+        .shaking {
+            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+        }
+
+        /* 발표자용 트리거 버튼 (화면 우측 하단 구석에 배치) */
+        .trigger-btn {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            opacity: 0.3; /* 눈에 잘 띄지 않게 처리 */
+            transition: opacity 0.2s;
+        }
+        .trigger-btn:hover {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 가상의 스마트폰 프레임 -->
+    <div class="smartphone" id="smartphone">
+        <div class="notch"></div>
+        
+        <div class="screen">
+            <!-- 잠금화면 시계 (현재 시간 표시) -->
+            <div class="clock">
+                <p class="time" id="currentTime">00:00</p>
+                <p class="date">4월 28일 화요일</p>
+            </div>
+
+            <!-- 🚨 긴급 푸시 알림 요소 -->
+            <div class="push-notification" id="pushNotification">
+                <div class="push-header">
+                    <span>🚨</span> [긴급] 안전 케어 알림
+                </div>
+                <div class="push-body">
+                    김OO 어르신의 TV 무반응 상태가<br>지속되어 확인이 필요합니다.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 발표자용 트리거 버튼 -->
+    <button class="trigger-btn" id="triggerBtn">알림 전송 (단축키: T)</button>
+
+    <script>
+        // 요소 선택
+        const triggerBtn = document.getElementById('triggerBtn');
+        const pushNotification = document.getElementById('pushNotification');
+        const smartphone = document.getElementById('smartphone');
+        const timeDisplay = document.getElementById('currentTime');
+
+        // 현재 시간 표시 함수 (잠금화면 디테일)
+        function updateTime() {
+            const now = new Date();
+            let hours = now.getHours().toString().padStart(2, '0');
+            let minutes = now.getMinutes().toString().padStart(2, '0');
+            timeDisplay.textContent = `${hours}:${minutes}`;
+        }
+        setInterval(updateTime, 1000);
+        updateTime();
+
+        // 🚨 알림 발생 및 진동 함수
+        function triggerAlert() {
+            // 1. 스마트폰 진동 효과 추가
+            smartphone.classList.add('shaking');
+            
+            // 2. 푸시 알림 배너 내리기 (active 클래스 추가)
+            pushNotification.classList.add('active');
+
+            // 애니메이션이 끝난 후 진동 클래스 제거 (재사용을 위해)
+            setTimeout(() => {
+                smartphone.classList.remove('shaking');
+            }, 500);
+        }
+
+        // 버튼 클릭 이벤트
+        triggerBtn.addEventListener('click', triggerAlert);
+
+        // 키보드 단축키 이벤트 (자연스러운 데모 진행을 위해 'T' 키를 누르면 알림 발생)
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 't' || event.key === 'T') {
+                triggerAlert();
+            }
+        });
+
+        // 알림 클릭 시 다시 숨기기 (데모 초기화용)
+        pushNotification.addEventListener('click', () => {
+            pushNotification.classList.remove('active');
+        });
+    </script>
+</body>
+</html>
