@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { MonitorPlay, AlertCircle, Volume2, Volume1, VolumeX, Mic, MicOff } from 'lucide-react';
+import { MonitorPlay, AlertCircle, Volume2, Volume1, VolumeX, Mic, MicOff, Moon } from 'lucide-react';
 
 // Define only the available channels
 const AVAILABLE_CHANNELS = [1, 9, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 31];
@@ -64,6 +64,7 @@ export default function App() {
   const [isChanging, setIsChanging] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
   const [showRecommendation, setShowRecommendation] = useState(false);
+  const [showSleepNotification, setShowSleepNotification] = useState(false);
   
   // Volume state
   const [volume, setVolume] = useState(10);
@@ -220,6 +221,9 @@ export default function App() {
         e.preventDefault();
         setShowRecommendation(true);
         startRecording();
+      } else if (e.key === '4') {
+        e.preventDefault();
+        setShowSleepNotification(true);
       }
     };
 
@@ -256,24 +260,8 @@ export default function App() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center w-full max-w-6xl gap-8">
+    <div className="flex flex-col items-center justify-center w-full gap-8">
       
-      {/* Instructions */}
-      <div className="text-neutral-400 text-sm md:text-base flex flex-wrap items-center justify-center gap-4 bg-neutral-800/50 px-6 py-3 backdrop-blur-sm rounded-lg">
-        <div className="flex items-center gap-2">
-          <MonitorPlay size={18} className="text-neutral-300" />
-          <span>Use <kbd className="bg-neutral-700 px-2 py-1 text-white font-mono text-xs rounded">←</kbd> <kbd className="bg-neutral-700 px-2 py-1 text-white font-mono text-xs rounded">→</kbd> for channels</span>
-        </div>
-        <div className="w-px h-4 bg-neutral-600 hidden sm:block"></div>
-        <div className="flex items-center gap-2">
-          <span><kbd className="bg-neutral-700 px-2 py-1 text-white font-mono text-xs rounded">↑</kbd> <kbd className="bg-neutral-700 px-2 py-1 text-white font-mono text-xs rounded">↓</kbd> for volume</span>
-        </div>
-        <div className="w-px h-4 bg-neutral-600 hidden sm:block"></div>
-        <div className="flex items-center gap-2">
-          <span>Press <kbd className="bg-neutral-700 px-2 py-1 text-white font-mono text-xs rounded">1</kbd> for alert, <kbd className="bg-neutral-700 px-2 py-1 text-white font-mono text-xs rounded">2</kbd> for voice</span>
-        </div>
-      </div>
-
       {/* TV Set Container */}
       <div className="relative w-full bg-neutral-900 p-1 md:p-2 shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-neutral-700">
         <div className="relative bg-black overflow-hidden shadow-inner border-2 border-neutral-950">
@@ -406,6 +394,28 @@ export default function App() {
                     >
                       시청하기
                     </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Sleep Mode Notification */}
+            {showSleepNotification && (
+              <div className="absolute top-8 right-8 z-50 animate-in fade-in slide-in-from-top-4 duration-300">
+                <div className="bg-indigo-950/80 backdrop-blur-md border border-indigo-400/30 rounded-lg p-5 shadow-2xl max-w-sm flex gap-4 items-start">
+                  <div className="text-indigo-400 mt-0.5 shrink-0 animate-pulse"><Moon size={24} /></div>
+                  <div className="flex flex-col gap-4">
+                    <p className="text-white text-base leading-relaxed font-medium">
+                      수면 패턴이 감지되어 취침 모드로 전환합니다
+                    </p>
+                    <div className="flex justify-end">
+                      <button 
+                        onClick={() => setShowSleepNotification(false)} 
+                        className="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2 rounded-md text-sm font-bold transition-colors shadow-lg active:scale-95"
+                      >
+                        중지
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
